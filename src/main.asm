@@ -10,8 +10,11 @@ BasicUpstart2(start)
 .const TABLE_ROWS = 21
 .const TABLE_COLS = 8
 
-// current line in screen memory
+// pointer to current line in screen memory
 .const CURRENT_LINE_START = $02
+
+// pointer to address being written
+.const CURRENT_ADDRESS = $f2
 
 
 // column offset for the address
@@ -25,9 +28,6 @@ ASCII_OFFSET: .byte 30, 31, 32, 33, 35, 36, 37, 38
 
 // address at top left of screen
 START_ADDRESS: .word DEFAULT_ADDRESS
-
-// address being written
-CURRENT_ADDRESS: .word DEFAULT_ADDRESS
 
 
 start:
@@ -82,13 +82,14 @@ outputLine:
     ldx #0
 
     // load value to A
-!:  lda #'x'
+!:  ldy #0
+    lda (CURRENT_ADDRESS),y
 
     // output bytes
     ldy BYTE_OFFSET,x
-    sta (CURRENT_LINE_START),y
-    iny
-    sta (CURRENT_LINE_START),y
+    jsr output_byte
+
+    lda #'x'
 
     // output ASCII
     ldy ASCII_OFFSET,x
