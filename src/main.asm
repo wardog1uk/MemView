@@ -91,6 +91,28 @@ update:
 !:  dec START_ADDRESS
     rts
 
+    // up arrow
+!:  cmp #$91
+    bne !++
+    lda START_ADDRESS
+    sec
+    sbc #TABLE_COLS * TABLE_ROWS
+    bcs !+
+    dec START_ADDRESS+1
+!:  sta START_ADDRESS
+    rts
+
+    // down arrow
+!:  cmp #$11
+    bne !++
+    lda START_ADDRESS
+    clc
+    adc #TABLE_COLS * TABLE_ROWS
+    bcc !+
+    inc START_ADDRESS+1
+!:  sta START_ADDRESS
+    rts
+
     // exit program
 !:  pla
     pla
