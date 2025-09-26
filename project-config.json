@@ -1,0 +1,13 @@
+{
+    "name": "MemMon4",
+    "description": "Project MemMon4",
+    "toolkit": "kick",
+    "sources": [
+        "src/main.asm"
+    ],
+    "build": "debug",
+    "definitions": [],
+    "includes": [],
+    "args": [],
+    "compiler": ""
+}
