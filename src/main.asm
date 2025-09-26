@@ -56,11 +56,7 @@ start:
 // Write the data to the screen
 // ==========================================
 outputScreenData:
-    // set start line to top left of screen
-    lda #<SCREEN_RAM
-    sta CURRENT_LINE_START
-    lda #>SCREEN_RAM
-    sta CURRENT_LINE_START+1
+    jsr reset_line_start
 
     // move to start of first row
     ldx #ROW_START
@@ -254,6 +250,19 @@ byte_to_char:
     sbc #'9'
 
 !:  rts
+// ==========================================
+
+
+// ==========================================
+// Move line start to top left of screen
+// ==========================================
+reset_line_start:
+    // set start line to top left of screen
+    lda #<SCREEN_RAM
+    sta CURRENT_LINE_START
+    lda #>SCREEN_RAM
+    sta CURRENT_LINE_START+1
+    rts
 // ==========================================
 
 
