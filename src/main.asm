@@ -14,10 +14,10 @@ BasicUpstart2(start)
 .const TABLE_COLS = 8
 
 // pointer to current line in screen memory
-.const CURRENT_LINE_START = $02
+.const CURRENT_LINE_START = $fb
 
 // pointer to address being written
-.const CURRENT_ADDRESS = $f2
+.const CURRENT_ADDRESS = $fd
 // ==========================================
 
 
