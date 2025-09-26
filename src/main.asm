@@ -89,8 +89,6 @@ outputLine:
     ldy BYTE_OFFSET,x
     jsr output_byte
 
-    lda #'x'
-
     // output ASCII
     ldy ASCII_OFFSET,x
     sta (CURRENT_LINE_START),y
@@ -131,6 +129,7 @@ outputAddress:
 output_byte:
     // save byte to the stack
     pha
+    pha
 
     // shift high byte to low byte
     lsr
@@ -154,6 +153,9 @@ output_byte:
     // write character to screen
     sta (CURRENT_LINE_START),y
     iny
+
+    // restore original byte to A
+    pla
 
     rts
 //==========================================================
