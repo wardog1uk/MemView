@@ -35,6 +35,11 @@ start:
     jsr $ffd2
 
     jsr outputScreenData
+
+    // wait for key press
+!:  jsr $ffe4
+    beq !-
+
     rts
 
 
