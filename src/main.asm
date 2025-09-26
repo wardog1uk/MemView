@@ -2,6 +2,9 @@ BasicUpstart2(start)
 *=* "Start"
 
 
+// ==========================================
+// Constants
+// ==========================================
 .const SCREEN_RAM = $0400
 .const DEFAULT_ADDRESS = $c000
 
@@ -15,8 +18,12 @@ BasicUpstart2(start)
 
 // pointer to address being written
 .const CURRENT_ADDRESS = $f2
+// ==========================================
 
 
+// ==========================================
+// Variables
+// ==========================================
 // column offset for the address
 ADDRESS_OFFSET: .byte 1
 
@@ -28,8 +35,12 @@ ASCII_OFFSET: .byte 30, 31, 32, 33, 35, 36, 37, 38
 
 // address at top left of screen
 START_ADDRESS: .word DEFAULT_ADDRESS
+// ==========================================
 
 
+// ==========================================
+// Program Entry
+// ==========================================
 start:
     lda #$93
     jsr $ffd2
@@ -38,8 +49,12 @@ start:
     jsr update
     clc
     bcc !-
+// ==========================================
 
 
+// ==========================================
+// Write the data to the screen
+// ==========================================
 outputScreenData:
     // set start line to top left of screen
     lda #<SCREEN_RAM
@@ -67,8 +82,12 @@ outputScreenData:
     bne !-
 
     rts
+// ==========================================
 
 
+// ==========================================
+// Get and process user input
+// ==========================================
 update:
     // wait for key press
 !:  jsr $ffe4
@@ -117,8 +136,12 @@ update:
 !:  pla
     pla
     rts
+// ==========================================
 
 
+// ==========================================
+// Output the current line of data
+// ==========================================
 outputLine:
     // save X to the stack
     txa
@@ -154,8 +177,12 @@ outputLine:
     tax
 
     rts
+// ==========================================
 
 
+// ==========================================
+// Output the current address
+// ==========================================
 outputAddress:
     ldy ADDRESS_OFFSET
 
@@ -166,6 +193,7 @@ outputAddress:
     jsr output_byte
 
     rts
+// ==========================================
 
 
 // ==========================================
@@ -205,12 +233,12 @@ output_byte:
     pla
 
     rts
-//==========================================================
+// ==========================================
 
 
 // ==========================================
 // Convert low byte of A to screen character
-// ------------------------------------------
+// ==========================================
 byte_to_char:
     // mask off high byte
     and #$0f
@@ -229,6 +257,9 @@ byte_to_char:
 // ==========================================
 
 
+// ==========================================
+// Move CURRENT_LINE_START to the next line
+// ==========================================
 move_down:
     lda CURRENT_LINE_START
     clc
@@ -237,3 +268,4 @@ move_down:
     inc CURRENT_LINE_START+1
 !:  sta CURRENT_LINE_START
     rts
+// ==========================================
