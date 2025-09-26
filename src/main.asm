@@ -3,6 +3,7 @@ BasicUpstart2(start)
 
 
 .const SCREEN_RAM = $0400
+.const DEFAULT_ADDRESS = $c000
 
 .const SCREEN_WIDTH = 40
 .const ROW_START = 2
@@ -21,6 +22,12 @@ BYTE_OFFSET: .byte 6, 9, 12, 15, 18, 21, 24, 27
 
 // column offsets for the ASCII characters
 ASCII_OFFSET: .byte 30, 31, 32, 33, 35, 36, 37, 38
+
+// address at top left of screen
+START_ADDRESS: .word DEFAULT_ADDRESS
+
+// address being written
+CURRENT_ADDRESS: .word DEFAULT_ADDRESS
 
 
 start:
@@ -59,17 +66,15 @@ outputLine:
     txa
     pha
 
-    lda #'0'
+    jsr outputAddress
 
-    // output address
-    ldy ADDRESS_OFFSET
-    sta (CURRENT_LINE_START),y
-    iny
-    sta (CURRENT_LINE_START),y
-    iny
-    sta (CURRENT_LINE_START),y
-    iny
-    sta (CURRENT_LINE_START),y
+    // move to next line
+    lda CURRENT_ADDRESS
+    clc
+    adc #TABLE_COLS
+    bcc !+
+    inc CURRENT_ADDRESS+1
+!:  sta CURRENT_ADDRESS
 
     ldx #0
 
@@ -95,6 +100,75 @@ outputLine:
     tax
 
     rts
+
+
+outputAddress:
+    ldy ADDRESS_OFFSET
+
+    lda CURRENT_ADDRESS+1
+    jsr output_byte
+
+    lda CURRENT_ADDRESS
+    jsr output_byte
+
+    rts
+
+
+// ==========================================
+// Output the hex value of the current byte
+//-------------------------------------------
+// Set Y to the column offset
+// ==========================================
+output_byte:
+    // save byte to the stack
+    pha
+
+    // shift high byte to low byte
+    lsr
+    lsr
+    lsr
+    lsr
+
+    // convert to screen character
+    jsr byte_to_char
+
+    // write character to screen
+    sta (CURRENT_LINE_START),y
+    iny
+
+    // restore byte
+    pla
+
+    // convert to screen character
+    jsr byte_to_char
+
+    // write character to screen
+    sta (CURRENT_LINE_START),y
+    iny
+
+    rts
+//==========================================================
+
+
+// ==========================================
+// Convert low byte of A to screen character
+// ------------------------------------------
+byte_to_char:
+    // mask off high byte
+    and #$0f
+
+    // add '0'
+    ora #'0'
+
+    // check if > 9
+    cmp #'9'+1
+    bcc !+
+
+    // if > 9 then convert to 'a' to 'f' 
+    sbc #'9'
+
+!:  rts
+// ==========================================
 
 
 move_down:
