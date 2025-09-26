@@ -68,14 +68,6 @@ outputLine:
 
     jsr outputAddress
 
-    // move to next line
-    lda CURRENT_ADDRESS
-    clc
-    adc #TABLE_COLS
-    bcc !+
-    inc CURRENT_ADDRESS+1
-!:  sta CURRENT_ADDRESS
-
     ldx #0
 
     // load value to A
@@ -91,9 +83,14 @@ outputLine:
     ldy ASCII_OFFSET,x
     sta (CURRENT_LINE_START),y
 
-    inx
+    // move to next address
+    inc CURRENT_ADDRESS
+    bne !+
+    inc CURRENT_ADDRESS+1
+
+!:  inx
     cpx #TABLE_COLS
-    bne !-
+    bne !--
 
     // restore X
     pla
