@@ -34,33 +34,10 @@ start:
     lda #$93
     jsr $ffd2
 
-loop:
-    jsr outputScreenData
-
-    // wait for key press
-!:  jsr $ffe4
-    beq !-
-
-    // right arrow
-    cmp #$1d
-    bne !++
-    inc START_ADDRESS
-    bne !+
-    inc START_ADDRESS+1
-!:  clc
-    bcc loop
-
-    // left arrow
-!:  cmp #$9d
-    bne !++
-    lda START_ADDRESS
-    bne !+
-    dec START_ADDRESS+1
-!:  dec START_ADDRESS
+!:  jsr outputScreenData
+    jsr update
     clc
-    bcc loop
-
-!:  rts
+    bcc !-
 
 
 outputScreenData:
@@ -89,6 +66,34 @@ outputScreenData:
     dex
     bne !-
 
+    rts
+
+
+update:
+    // wait for key press
+!:  jsr $ffe4
+    beq !-
+
+    // right arrow
+    cmp #$1d
+    bne !++
+    inc START_ADDRESS
+    bne !+
+    inc START_ADDRESS+1
+!:  rts
+
+    // left arrow
+!:  cmp #$9d
+    bne !++
+    lda START_ADDRESS
+    bne !+
+    dec START_ADDRESS+1
+!:  dec START_ADDRESS
+    rts
+
+    // exit program
+!:  pla
+    pla
     rts
 
 
