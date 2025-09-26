@@ -39,7 +39,7 @@ start:
 
 
 outputScreenData:
-    // set to start of screen
+    // set start line to top left of screen
     lda #<SCREEN_RAM
     sta CURRENT_LINE_START
     lda #>SCREEN_RAM
@@ -50,6 +50,12 @@ outputScreenData:
 !:  jsr move_down
     dex
     bne !-
+
+    // set current address to first address
+    lda START_ADDRESS
+    sta CURRENT_ADDRESS
+    lda START_ADDRESS+1
+    sta CURRENT_ADDRESS+1
 
     // output all lines
     ldx #TABLE_ROWS
