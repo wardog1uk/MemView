@@ -12,6 +12,7 @@ BasicUpstart2(start)
 .const ROW_START = 2
 .const TABLE_ROWS = 21
 .const TABLE_COLS = 8
+.const TITLE_OFFSET = 13
 
 // pointer to current line in screen memory
 .const CURRENT_LINE_START = $fb
@@ -35,6 +36,10 @@ ASCII_OFFSET: .byte 30, 31, 32, 33, 35, 36, 37, 38
 
 // address at top left of screen
 START_ADDRESS: .word DEFAULT_ADDRESS
+
+TITLE:
+    .text "memory viewer"
+    .byte 0
 // ==========================================
 
 
@@ -45,10 +50,41 @@ start:
     lda #$93
     jsr $ffd2
 
+    jsr show_title
+
 !:  jsr outputScreenData
     jsr update
     clc
     bcc !-
+// ==========================================
+
+
+// ==========================================
+// Show the title
+// ==========================================
+show_title:
+    jsr reset_line_start
+
+    lda #' '+128
+    ldy #SCREEN_WIDTH
+!:  dey
+    sta (CURRENT_LINE_START),y
+    bne !-
+
+    ldy #TITLE_OFFSET
+    ldx #0
+
+!:  lda TITLE,x
+    beq !+
+    clc
+    adc #128
+    sta (CURRENT_LINE_START),y
+    iny
+    inx
+    clc
+    bcc !-
+
+!:  rts
 // ==========================================
 
 
