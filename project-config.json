@@ -1,6 +1,6 @@
 {
-    "name": "MemMon4",
-    "description": "Project MemMon4",
+    "name": "MemView",
+    "description": "Project MemView",
     "toolkit": "kick",
     "sources": [
         "src/main.asm"
