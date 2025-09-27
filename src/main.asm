@@ -14,7 +14,7 @@ BasicUpstart2(start)
 .const SCREEN_WIDTH = 40
 
 // Table dimensions
-.const TABLE_ROWS = 21
+.const TABLE_ROWS = 22
 .const TABLE_COLS = 8
 
 // Screen offsets
