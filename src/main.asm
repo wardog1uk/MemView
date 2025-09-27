@@ -133,14 +133,14 @@ update:
     // right arrow
     cmp #$1d
     bne !+
-    lda #1
+    lda #TABLE_COLS
     jsr increase_start_address
     rts
 
     // left arrow
 !:  cmp #$9d
     bne !+
-    lda #1
+    lda #TABLE_COLS
     jsr decrease_start_address
     rts
 
