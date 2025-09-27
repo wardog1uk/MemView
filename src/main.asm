@@ -5,14 +5,22 @@ BasicUpstart2(start)
 // ==========================================
 // Constants
 // ==========================================
+// Location of screen memory
 .const SCREEN_RAM = $0400
+
+// Initial start address
 .const DEFAULT_ADDRESS = $c000
 
 .const SCREEN_WIDTH = 40
-.const ROW_START = 2
+
+// Table dimensions
 .const TABLE_ROWS = 21
 .const TABLE_COLS = 8
+
+// Screen offsets
 .const TITLE_OFFSET = 13
+.const ADDRESS_OFFSET = 1
+.const ROW_START = 2
 
 // pointer to current line in screen memory
 .const CURRENT_LINE_START = $fb
@@ -25,9 +33,6 @@ BasicUpstart2(start)
 // ==========================================
 // Variables
 // ==========================================
-// column offset for the address
-ADDRESS_OFFSET: .byte 1
-
 // column offsets for the bytes
 BYTE_OFFSET: .byte 6, 9, 12, 15, 18, 21, 24, 27
 
@@ -216,7 +221,7 @@ outputLine:
 // Output the current address
 // ==========================================
 outputAddress:
-    ldy ADDRESS_OFFSET
+    ldy #ADDRESS_OFFSET
 
     lda CURRENT_ADDRESS+1
     jsr output_byte
