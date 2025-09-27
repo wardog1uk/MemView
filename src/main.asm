@@ -132,46 +132,65 @@ update:
 
     // right arrow
     cmp #$1d
-    bne !++
-    inc START_ADDRESS
     bne !+
-    inc START_ADDRESS+1
-!:  rts
+    lda #1
+    jsr increase_start_address
+    rts
 
     // left arrow
 !:  cmp #$9d
-    bne !++
-    lda START_ADDRESS
     bne !+
-    dec START_ADDRESS+1
-!:  dec START_ADDRESS
+    lda #1
+    jsr decrease_start_address
     rts
 
     // up arrow
 !:  cmp #$91
-    bne !++
-    lda START_ADDRESS
-    sec
-    sbc #TABLE_COLS * TABLE_ROWS
-    bcs !+
-    dec START_ADDRESS+1
-!:  sta START_ADDRESS
+    bne !+
+    lda #TABLE_COLS * TABLE_ROWS
+    jsr decrease_start_address
     rts
 
     // down arrow
 !:  cmp #$11
-    bne !++
-    lda START_ADDRESS
-    clc
-    adc #TABLE_COLS * TABLE_ROWS
-    bcc !+
-    inc START_ADDRESS+1
-!:  sta START_ADDRESS
+    bne !+
+    lda #TABLE_COLS * TABLE_ROWS
+    jsr increase_start_address
     rts
 
     // exit program
 !:  pla
     pla
+    rts
+// ==========================================
+
+
+// ==========================================
+// Increase the start address by A
+// ==========================================
+increase_start_address:
+    clc
+    adc START_ADDRESS
+    bcc !+
+    inc START_ADDRESS+1
+!:  sta START_ADDRESS
+    rts
+// ==========================================
+
+
+// ==========================================
+// Decrease the start address by A
+// ==========================================
+decrease_start_address:
+    // add two's complement of A to subtract
+    eor #$ff
+    clc
+    adc #1
+    clc
+    adc START_ADDRESS
+    bcs !+
+    dec START_ADDRESS+1
+!:  sta START_ADDRESS
     rts
 // ==========================================
 
