@@ -12,9 +12,10 @@ BasicUpstart2(start)
 .const DEFAULT_ADDRESS = $c000
 
 .const SCREEN_WIDTH = 40
+.const SCREEN_HEIGHT = 24
 
 // Table dimensions
-.const TABLE_ROWS = 22
+.const TABLE_ROWS = 21
 .const TABLE_COLS = 8
 
 // Screen offsets
@@ -27,6 +28,9 @@ BasicUpstart2(start)
 
 // pointer to address being written
 .const CURRENT_ADDRESS = $fd
+
+// Address for the start of the status line
+.const STATUS_LINE_START = SCREEN_RAM + (SCREEN_HEIGHT * SCREEN_WIDTH)
 // ==========================================
 
 
@@ -45,6 +49,10 @@ START_ADDRESS: .word DEFAULT_ADDRESS
 TITLE:
     .text "memory viewer"
     .byte 0
+
+GOTO:
+    .text "goto:"
+    .byte 0
 // ==========================================
 
 
@@ -56,6 +64,7 @@ start:
     jsr $ffd2
 
     jsr show_title
+    jsr show_status_bar
 
 !:  jsr output_screen_data
     jsr update
@@ -90,6 +99,25 @@ show_title:
     bcc !-
 
 !:  rts
+// ==========================================
+
+
+// ==========================================
+// Show the status bar
+// ==========================================
+show_status_bar:
+    lda #<STATUS_LINE_START
+    sta CURRENT_LINE_START
+    lda #>STATUS_LINE_START
+    sta CURRENT_LINE_START+1
+
+    lda #' '+128
+    ldy #SCREEN_WIDTH
+!:  dey
+    sta (CURRENT_LINE_START),y
+    bne !-
+
+    rts
 // ==========================================
 
 
@@ -172,6 +200,12 @@ update:
     jsr decrease_start_address
     rts
 
+    // G - goto address
+!:  cmp #$47
+    bne !+
+    jsr goto_address
+    rts
+
     // Q - exit program
 !:  cmp #$51
     bne !+
@@ -210,6 +244,35 @@ decrease_start_address:
     bcs !+
     dec START_ADDRESS+1
 !:  sta START_ADDRESS
+    rts
+// ==========================================
+
+
+// ==========================================
+goto_address:
+    // move to status line
+    lda #<STATUS_LINE_START
+    sta CURRENT_LINE_START
+    lda #>STATUS_LINE_START
+    sta CURRENT_LINE_START+1
+
+    ldy #15
+    ldx #0
+
+    // output GOTO text
+!:  lda GOTO,x
+    beq !+
+    clc
+    adc #128
+    sta (CURRENT_LINE_START),y
+    iny
+    inx
+    clc
+    bcc !-
+
+    // output current address
+!:  jsr outputAddress
+
     rts
 // ==========================================
 
