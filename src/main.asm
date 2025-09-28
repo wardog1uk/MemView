@@ -222,6 +222,7 @@ outputLine:
     txa
     pha
 
+    ldy #ADDRESS_OFFSET
     jsr outputAddress
 
     ldx #0
@@ -256,11 +257,9 @@ outputLine:
 
 
 // ==========================================
-// Output the current address
+// Output the current address at position Y
 // ==========================================
 outputAddress:
-    ldy #ADDRESS_OFFSET
-
     lda CURRENT_ADDRESS+1
     jsr output_byte
 
