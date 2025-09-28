@@ -172,10 +172,15 @@ update:
     jsr decrease_start_address
     rts
 
-    // exit program
-!:  pla
+    // Q - exit program
+!:  cmp #$51
+    bne !+
+    pla
     pla
     rts
+
+    // return to start
+!:  rts
 // ==========================================
 
 
