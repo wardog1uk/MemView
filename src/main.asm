@@ -158,6 +158,20 @@ update:
     jsr increase_start_address
     rts
 
+    // plus key
+!:  cmp #$2b
+    bne !+
+    lda #1
+    jsr increase_start_address
+    rts
+
+    // minus key
+!:  cmp #$2d
+    bne !+
+    lda #1
+    jsr decrease_start_address
+    rts
+
     // exit program
 !:  pla
     pla
