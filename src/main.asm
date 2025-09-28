@@ -270,8 +270,13 @@ goto_address:
     clc
     bcc !-
 
-    // output current address
-!:  jsr outputAddress
+    // output start address
+!:  lda START_ADDRESS
+    sta CURRENT_ADDRESS
+    lda START_ADDRESS+1
+    sta CURRENT_ADDRESS+1
+
+    jsr outputAddress
 
     rts
 // ==========================================
