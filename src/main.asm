@@ -222,8 +222,12 @@ output_line:
     txa
     pha
 
+    // output address
     ldy #ADDRESS_OFFSET
-    jsr output_address
+    lda CURRENT_ADDRESS+1
+    jsr output_byte
+    lda CURRENT_ADDRESS
+    jsr output_byte
 
     ldx #0
 
@@ -251,20 +255,6 @@ output_line:
     // restore X
     pla
     tax
-
-    rts
-// ==========================================
-
-
-// ==========================================
-// Output the current address at position Y
-// ==========================================
-output_address:
-    lda CURRENT_ADDRESS+1
-    jsr output_byte
-
-    lda CURRENT_ADDRESS
-    jsr output_byte
 
     rts
 // ==========================================
