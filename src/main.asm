@@ -18,7 +18,6 @@ BasicUpstart2(start)
 .const TABLE_COLS = 8
 
 // Screen offsets
-.const TITLE_OFFSET = 13
 .const ADDRESS_OFFSET = 1
 .const ROW_START = 2
 
@@ -27,6 +26,8 @@ BasicUpstart2(start)
 
 // pointer to address being written
 .const CURRENT_ADDRESS = $fd
+
+.const TITLE_TEXT = "memory viewer"
 // ==========================================
 
 
@@ -43,7 +44,7 @@ ASCII_OFFSET: .byte 30, 31, 32, 33, 35, 36, 37, 38
 START_ADDRESS: .word DEFAULT_ADDRESS
 
 TITLE:
-    .text "memory viewer"
+    .text TITLE_TEXT
     .byte 0
 // ==========================================
 
@@ -76,7 +77,7 @@ show_title:
     sta (CURRENT_LINE_START),y
     bne !-
 
-    ldy #TITLE_OFFSET
+    ldy #(SCREEN_WIDTH-TITLE_TEXT.size())/2
     ldx #0
 
 !:  lda TITLE,x
