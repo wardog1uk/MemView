@@ -81,11 +81,7 @@ start:
 show_title:
     jsr reset_line_start
 
-    lda #' '+128
-    ldy #SCREEN_WIDTH
-!:  dey
-    sta (CURRENT_LINE_START),y
-    bne !-
+    jsr clear_line
 
     ldy #(SCREEN_WIDTH-TITLE_TEXT.size())/2
     ldx #0
@@ -113,12 +109,20 @@ show_status_bar:
     lda #>STATUS_LINE_START
     sta CURRENT_LINE_START+1
 
+    jsr clear_line
+    rts
+// ==========================================
+
+
+// ==========================================
+// Clear the current line with reverse spaces
+// ==========================================
+clear_line:
     lda #' '+128
     ldy #SCREEN_WIDTH
 !:  dey
     sta (CURRENT_LINE_START),y
     bne !-
-
     rts
 // ==========================================
 
