@@ -276,6 +276,7 @@ goto_address:
     lda START_ADDRESS+1
     sta CURRENT_ADDRESS+1
 
+    ldy #20
     jsr output_address
 
     // get key press
@@ -291,12 +292,24 @@ goto_address:
     // not a hex digit
     bmi !-
 
-    // handle hex key
-    // ...
+    // handle hex digit
+    // shift address left by one byte
+    asl START_ADDRESS
+    rol START_ADDRESS+1
+    asl START_ADDRESS
+    rol START_ADDRESS+1
+    asl START_ADDRESS
+    rol START_ADDRESS+1
+    asl START_ADDRESS
+    rol START_ADDRESS+1
+
+    // add hex value to address
+    ora START_ADDRESS
+    sta START_ADDRESS
 
     // restart loop
     clc
-    bcc !-
+    bcc !--
 
     // redraw status bar
 !:  jsr show_status_bar
