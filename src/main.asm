@@ -469,7 +469,6 @@ convert_hex_digit:
     cmp #16
     bcs !+      // bad if >15
 
-    sec
     cmp #10
     bcs !++     // good if 10-15
 
