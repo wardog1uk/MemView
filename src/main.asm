@@ -57,7 +57,7 @@ start:
 
     jsr show_title
 
-!:  jsr outputScreenData
+!:  jsr output_screen_data
     jsr update
     clc
     bcc !-
@@ -96,7 +96,7 @@ show_title:
 // ==========================================
 // Write the data to the screen
 // ==========================================
-outputScreenData:
+output_screen_data:
     jsr reset_line_start
 
     // move to start of first row
@@ -113,7 +113,7 @@ outputScreenData:
 
     // output all lines
     ldx #TABLE_ROWS
-!:  jsr outputLine
+!:  jsr output_line
     jsr move_down
     dex
     bne !-
@@ -217,13 +217,13 @@ decrease_start_address:
 // ==========================================
 // Output the current line of data
 // ==========================================
-outputLine:
+output_line:
     // save X to the stack
     txa
     pha
 
     ldy #ADDRESS_OFFSET
-    jsr outputAddress
+    jsr output_address
 
     ldx #0
 
@@ -259,7 +259,7 @@ outputLine:
 // ==========================================
 // Output the current address at position Y
 // ==========================================
-outputAddress:
+output_address:
     lda CURRENT_ADDRESS+1
     jsr output_byte
 
