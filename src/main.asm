@@ -471,7 +471,7 @@ convert_hex_digit:
 
     sec
     cmp #10
-    bcs !++     // good if 9-15
+    bcs !++     // good if 10-15
 
     // bad - set negative flag
 !:  lda #$ff
