@@ -278,6 +278,29 @@ goto_address:
 
     jsr outputAddress
 
+    // get key press
+!:  jsr $ffe4
+    beq !-
+
+    // check for return key
+    cmp #$0d
+    beq !+
+
+    jsr convert_hex_digit
+
+    // not a hex digit
+    bmi !-
+
+    // handle hex key
+    // ...
+
+    // restart loop
+    clc
+    bcc !-
+
+    // redraw status bar
+!:  jsr show_status_bar
+
     rts
 // ==========================================
 
@@ -422,5 +445,35 @@ move_down:
     bcc !+
     inc CURRENT_LINE_START+1
 !:  sta CURRENT_LINE_START
+    rts
+// ==========================================
+
+
+// ==========================================
+// Set A to binary value of hex digit in A
+// or $ff if not a hex digit.
+// ==========================================
+convert_hex_digit:
+    sec
+    sbc #'0'
+    bcc !+      // bad if <0
+
+    cmp #10
+    bcc !++     // good if 0-9
+
+    sbc #7
+    cmp #16
+    bcs !+      // bad if >15
+
+    sec
+    cmp #10
+    bcs !++     // good if 9-15
+
+    // bad - set negative flag
+!:  lda #$ff
+    rts
+
+    // good - clear negative flag
+!:  ldx #0
     rts
 // ==========================================
