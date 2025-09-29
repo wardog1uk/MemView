@@ -271,13 +271,11 @@ goto_address:
     bcc !-
 
     // output start address
-!:  lda START_ADDRESS
-    sta CURRENT_ADDRESS
+!:  ldy #20
     lda START_ADDRESS+1
-    sta CURRENT_ADDRESS+1
-
-    ldy #20
-    jsr output_address
+    jsr output_byte
+    lda START_ADDRESS
+    jsr output_byte
 
     // get key press
 !:  jsr $ffe4
