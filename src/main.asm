@@ -12,9 +12,10 @@ BasicUpstart2(start)
 .const DEFAULT_ADDRESS = $c000
 
 .const SCREEN_WIDTH = 40
+.const SCREEN_HEIGHT = 24
 
 // Table dimensions
-.const TABLE_ROWS = 22
+.const TABLE_ROWS = 21
 .const TABLE_COLS = 8
 
 // Screen offsets
@@ -27,7 +28,11 @@ BasicUpstart2(start)
 // pointer to address being written
 .const CURRENT_ADDRESS = $fd
 
+// Address for the start of the status line
+.const STATUS_LINE_START = SCREEN_RAM + (SCREEN_HEIGHT * SCREEN_WIDTH)
+
 .const TITLE_TEXT = "memory viewer"
+.const GOTO_TEXT = "goto:"
 // ==========================================
 
 
@@ -46,6 +51,10 @@ START_ADDRESS: .word DEFAULT_ADDRESS
 TITLE:
     .text TITLE_TEXT
     .byte 0
+
+GOTO:
+    .text GOTO_TEXT
+    .byte 0
 // ==========================================
 
 
@@ -57,6 +66,7 @@ start:
     jsr $ffd2
 
     jsr show_title
+    jsr show_status_bar
 
 !:  jsr output_screen_data
     jsr update
@@ -91,6 +101,25 @@ show_title:
     bcc !-
 
 !:  rts
+// ==========================================
+
+
+// ==========================================
+// Show the status bar
+// ==========================================
+show_status_bar:
+    lda #<STATUS_LINE_START
+    sta CURRENT_LINE_START
+    lda #>STATUS_LINE_START
+    sta CURRENT_LINE_START+1
+
+    lda #' '+128
+    ldy #SCREEN_WIDTH
+!:  dey
+    sta (CURRENT_LINE_START),y
+    bne !-
+
+    rts
 // ==========================================
 
 
@@ -173,6 +202,12 @@ update:
     jsr decrease_start_address
     rts
 
+    // G - goto address
+!:  cmp #$47
+    bne !+
+    jsr goto_address
+    rts
+
     // Q - exit program
 !:  cmp #$51
     bne !+
@@ -211,6 +246,75 @@ decrease_start_address:
     bcs !+
     dec START_ADDRESS+1
 !:  sta START_ADDRESS
+    rts
+// ==========================================
+
+
+// ==========================================
+goto_address:
+    // move to status line
+    lda #<STATUS_LINE_START
+    sta CURRENT_LINE_START
+    lda #>STATUS_LINE_START
+    sta CURRENT_LINE_START+1
+
+    .var goto_start = (SCREEN_WIDTH-GOTO_TEXT.size()-4)/2
+    ldy #goto_start
+    ldx #0
+
+    // output GOTO text
+!:  lda GOTO,x
+    beq !+
+    clc
+    adc #128
+    sta (CURRENT_LINE_START),y
+    iny
+    inx
+    clc
+    bcc !-
+
+    // output start address
+!:  ldy #goto_start+GOTO_TEXT.size()
+    lda START_ADDRESS+1
+    jsr output_byte
+    lda START_ADDRESS
+    jsr output_byte
+
+    // get key press
+!:  jsr $ffe4
+    beq !-
+
+    // check for return key
+    cmp #$0d
+    beq !+
+
+    jsr convert_hex_digit
+
+    // not a hex digit
+    bmi !-
+
+    // handle hex digit
+    // shift address left by one byte
+    asl START_ADDRESS
+    rol START_ADDRESS+1
+    asl START_ADDRESS
+    rol START_ADDRESS+1
+    asl START_ADDRESS
+    rol START_ADDRESS+1
+    asl START_ADDRESS
+    rol START_ADDRESS+1
+
+    // add hex value to address
+    ora START_ADDRESS
+    sta START_ADDRESS
+
+    // restart loop
+    clc
+    bcc !--
+
+    // redraw status bar
+!:  jsr show_status_bar
+
     rts
 // ==========================================
 
@@ -345,5 +449,34 @@ move_down:
     bcc !+
     inc CURRENT_LINE_START+1
 !:  sta CURRENT_LINE_START
+    rts
+// ==========================================
+
+
+// ==========================================
+// Set A to binary value of hex digit in A
+// or $ff if not a hex digit.
+// ==========================================
+convert_hex_digit:
+    sec
+    sbc #'0'
+    bcc !+      // bad if <0
+
+    cmp #10
+    bcc !++     // good if 0-9
+
+    sbc #7
+    cmp #16
+    bcs !+      // bad if >15
+
+    cmp #10
+    bcs !++     // good if 10-15
+
+    // bad - set negative flag
+!:  lda #$ff
+    rts
+
+    // good - clear negative flag
+!:  ldx #0
     rts
 // ==========================================
