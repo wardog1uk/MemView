@@ -276,7 +276,7 @@ goto_address:
     lda START_ADDRESS+1
     sta CURRENT_ADDRESS+1
 
-    jsr outputAddress
+    jsr output_address
 
     // get key press
 !:  jsr $ffe4
