@@ -31,6 +31,8 @@ BasicUpstart2(start)
 
 // Address for the start of the status line
 .const STATUS_LINE_START = SCREEN_RAM + (SCREEN_HEIGHT * SCREEN_WIDTH)
+
+.const GOTO_TEXT = "goto:"
 // ==========================================
 
 
@@ -51,7 +53,7 @@ TITLE:
     .byte 0
 
 GOTO:
-    .text "goto:"
+    .text GOTO_TEXT
     .byte 0
 // ==========================================
 
@@ -256,7 +258,8 @@ goto_address:
     lda #>STATUS_LINE_START
     sta CURRENT_LINE_START+1
 
-    ldy #15
+    .var goto_start = (SCREEN_WIDTH-GOTO_TEXT.size()-4)/2
+    ldy #goto_start
     ldx #0
 
     // output GOTO text
@@ -271,7 +274,7 @@ goto_address:
     bcc !-
 
     // output start address
-!:  ldy #20
+!:  ldy #goto_start+GOTO_TEXT.size()
     lda START_ADDRESS+1
     jsr output_byte
     lda START_ADDRESS
