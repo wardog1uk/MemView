@@ -378,9 +378,34 @@ select_address:
     adc #128
     sta (CURRENT_LINE_START),y
 
+    // display status bar
+    jsr output_selected_address
+
     // get key press
 !:  jsr $ffe4
     beq !-
+
+    jsr show_status_bar
+
+    rts
+// ==========================================
+
+
+// ==========================================
+// Output the selected address status bar
+// ==========================================
+output_selected_address:
+    // move to status line
+    lda #<STATUS_LINE_START
+    sta CURRENT_LINE_START
+    lda #>STATUS_LINE_START
+    sta CURRENT_LINE_START+1
+
+    ldy #0
+    lda CURRENT_ADDRESS+1
+    jsr output_byte
+    lda CURRENT_ADDRESS
+    jsr output_byte
 
     rts
 // ==========================================
