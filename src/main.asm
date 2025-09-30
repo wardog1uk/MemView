@@ -360,6 +360,28 @@ select_address:
     dex
     bne !--
 
+    // get byte offset for selected column
+    ldx SELECTED_COLUMN
+    ldy BYTE_OFFSET,x
+
+    // invert first digit
+    lda (CURRENT_LINE_START),y
+    clc
+    adc #128
+    sta (CURRENT_LINE_START),y
+
+    iny
+
+    // invert second digit
+    lda (CURRENT_LINE_START),y
+    clc
+    adc #128
+    sta (CURRENT_LINE_START),y
+
+    // get key press
+!:  jsr $ffe4
+    beq !-
+
     rts
 // ==========================================
 
