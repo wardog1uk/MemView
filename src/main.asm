@@ -56,7 +56,7 @@ GOTO:
     .text GOTO_TEXT
     .byte 0
 
-// currently selected location
+// currently selected table location
 SELECTED_ROW: .byte 0
 SELECTED_COLUMN: .byte 0
 // ==========================================
