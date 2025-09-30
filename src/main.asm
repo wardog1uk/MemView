@@ -55,6 +55,10 @@ TITLE:
 GOTO:
     .text GOTO_TEXT
     .byte 0
+
+// currently selected location
+SELECTED_ROW: .byte 0
+SELECTED_COLUMN: .byte 0
 // ==========================================
 
 
@@ -333,6 +337,29 @@ goto_address:
 // Select the current address
 // ==========================================
 select_address:
+    // reset selection
+    lda #0
+    sta SELECTED_ROW
+    sta SELECTED_COLUMN
+
+    jsr reset_line_start
+
+    // calculate row offset on screen
+    lda #ROW_START
+    clc
+    adc SELECTED_ROW
+    tax
+
+    // move CURRENT_LINE_START to correct row
+!:  lda CURRENT_LINE_START
+    clc
+    adc #SCREEN_WIDTH
+    bcc !+
+    inc CURRENT_LINE_START+1
+!:  sta CURRENT_LINE_START
+    dex
+    bne !--
+
     rts
 // ==========================================
 
