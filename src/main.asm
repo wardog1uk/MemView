@@ -193,27 +193,27 @@ update:
     rts
 
     // plus key
-!:  cmp #$2b
+!:  cmp #'+'
     bne !+
     lda #1
     jsr increase_start_address
     rts
 
     // minus key
-!:  cmp #$2d
+!:  cmp #'-'
     bne !+
     lda #1
     jsr decrease_start_address
     rts
 
     // G - goto address
-!:  cmp #$47
+!:  cmp #'G'
     bne !+
     jsr goto_address
     rts
 
     // Q - exit program
-!:  cmp #$51
+!:  cmp #'Q'
     bne !+
     pla
     pla
