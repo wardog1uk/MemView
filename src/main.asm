@@ -212,6 +212,12 @@ update:
     jsr goto_address
     rts
 
+    // S - select address
+!:  cmp #'S'
+    bne !+
+    jsr select_address
+    rts
+
     // Q - exit program
 !:  cmp #'Q'
     bne !+
@@ -319,6 +325,14 @@ goto_address:
     // redraw status bar
 !:  jsr show_status_bar
 
+    rts
+// ==========================================
+
+
+// ==========================================
+// Select the current address
+// ==========================================
+select_address:
     rts
 // ==========================================
 
