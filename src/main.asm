@@ -344,6 +344,26 @@ select_address:
 
     jsr reset_line_start
 
+    // display current selection
+    jsr toggle_selection
+
+    // display status bar
+    jsr output_selected_address
+
+    // get key press
+!:  jsr $ffe4
+    beq !-
+
+    jsr show_status_bar
+
+    rts
+// ==========================================
+
+
+// ==========================================
+// Toggle the selection display
+// ==========================================
+toggle_selection:
     // calculate row offset on screen
     lda #ROW_START
     clc
@@ -377,15 +397,6 @@ select_address:
     clc
     adc #128
     sta (CURRENT_LINE_START),y
-
-    // display status bar
-    jsr output_selected_address
-
-    // get key press
-!:  jsr $ffe4
-    beq !-
-
-    jsr show_status_bar
 
     rts
 // ==========================================
