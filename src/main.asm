@@ -322,17 +322,17 @@ goto_address:
     ora START_ADDRESS
     sta START_ADDRESS
 
+    // reset selected row and column
+    lda #0
+    sta SELECTED_ROW
+    sta SELECTED_COLUMN
+
     // restart loop
     clc
     bcc !--
 
     // redraw status bar
 !:  jsr show_status_bar
-
-    // reset selected row and column
-    lda #0
-    sta SELECTED_ROW
-    sta SELECTED_COLUMN
 
     rts
 // ==========================================
