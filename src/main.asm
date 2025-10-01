@@ -401,11 +401,20 @@ output_selected_address:
     lda #>STATUS_LINE_START
     sta CURRENT_LINE_START+1
 
+    // set to output inverted characters
+    lda #128
+    sta CHAR_OFFSET
+
+    // output address
     ldy #0
     lda CURRENT_ADDRESS+1
     jsr output_byte
     lda CURRENT_ADDRESS
     jsr output_byte
+
+    // reset to normal characters
+    lda #0
+    sta CHAR_OFFSET
 
     rts
 // ==========================================
@@ -499,6 +508,8 @@ output_byte:
 
 // ==========================================
 // Convert low byte of A to screen character
+// ------------------------------------------
+// Adds CHAR_OFFSET to screen character
 // ==========================================
 byte_to_char:
     // mask off high byte
@@ -514,7 +525,11 @@ byte_to_char:
     // if > 9 then convert to 'a' to 'f' 
     sbc #'9'
 
-!:  rts
+    // add any offset
+!:  clc
+    adc CHAR_OFFSET: #0
+
+    rts
 // ==========================================
 
 
