@@ -358,6 +358,8 @@ select_address:
 !:  cmp #$91
     bne !+
     jsr toggle_selection
+    ldx SELECTED_ROW
+    beq select_address
     dec SELECTED_ROW
     clc
     bcc select_address
@@ -366,6 +368,9 @@ select_address:
 !:  cmp #$11
     bne !+
     jsr toggle_selection
+    ldx SELECTED_ROW
+    cpx #TABLE_ROWS-1
+    bcs select_address
     inc SELECTED_ROW
     clc
     bcc select_address
@@ -374,6 +379,8 @@ select_address:
 !:  cmp #$9d
     bne !+
     jsr toggle_selection
+    ldx SELECTED_COLUMN
+    beq select_address
     dec SELECTED_COLUMN
     clc
     bcc select_address
@@ -382,6 +389,9 @@ select_address:
 !:  cmp #$1d
     bne !+
     jsr toggle_selection
+    ldx SELECTED_COLUMN
+    cpx #TABLE_COLS-1
+    bcs select_address
     inc SELECTED_COLUMN
     clc
     bcc select_address
