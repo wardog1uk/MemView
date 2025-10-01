@@ -368,11 +368,11 @@ toggle_selection:
     lda #ROW_START
     clc
     adc SELECTED_ROW
-    tax
+    tay
 
     // move CURRENT_LINE_START to correct row
 !:  jsr move_down
-    dex
+    dey
     bne !-
 
     // get byte offset for selected column
