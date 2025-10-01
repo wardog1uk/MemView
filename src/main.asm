@@ -334,7 +334,7 @@ goto_address:
 
 
 // ==========================================
-// Select the current address
+// Select and display an address
 // ==========================================
 select_address:
     // reset selection
