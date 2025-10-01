@@ -329,6 +329,11 @@ goto_address:
     // redraw status bar
 !:  jsr show_status_bar
 
+    // reset selected row and column
+    lda #0
+    sta SELECTED_ROW
+    sta SELECTED_COLUMN
+
     rts
 // ==========================================
 
