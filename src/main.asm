@@ -347,6 +347,9 @@ select_address:
     // display current selection
     jsr toggle_selection
 
+    // get address of selected byte
+    jsr get_selected_address
+
     // display status bar
     jsr output_selected_address
 
@@ -392,6 +395,41 @@ toggle_selection:
     clc
     adc #128
     sta (CURRENT_LINE_START),y
+
+    rts
+// ==========================================
+
+
+// ==========================================
+// Point CURRENT_ADDRESS to selected address
+// ==========================================
+get_selected_address:
+    // set current address to start address
+    lda START_ADDRESS+1
+    sta CURRENT_ADDRESS+1
+    lda START_ADDRESS
+
+    // loop for all rows until X is 0
+    ldx SELECTED_ROW
+!:  beq !++
+
+    // add table width
+    clc
+    adc #TABLE_COLS
+    bcc !+
+    inc CURRENT_ADDRESS+1
+
+    // decrement X and restart loop
+!:  dex
+    clc
+    bcc !--
+
+    // add columns
+!:  clc
+    adc SELECTED_COLUMN
+    bcc !+
+    inc CURRENT_ADDRESS+1
+!:  sta CURRENT_ADDRESS
 
     rts
 // ==========================================
