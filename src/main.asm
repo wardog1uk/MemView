@@ -350,6 +350,10 @@ select_address:
     // get address of selected byte
     jsr get_selected_address
 
+    // load byte at selected address
+    ldy #0
+    lda (CURRENT_ADDRESS),y
+
     // display status bar
     jsr output_selected_address
 
@@ -437,8 +441,13 @@ get_selected_address:
 
 // ==========================================
 // Output the selected address status bar
+// ------------------------------------------
+// Displays CURRENT_ADDRESS and A as the byte
 // ==========================================
 output_selected_address:
+    // save A to the stack
+    pha
+
     // move to status line
     lda #<STATUS_LINE_START
     sta CURRENT_LINE_START
@@ -449,12 +458,29 @@ output_selected_address:
     lda #128
     sta CHAR_OFFSET
 
-    // output address
     ldy #0
+
+    lda #'['+128
+    sta (CURRENT_LINE_START),y
+    iny
+
+    // output address
     lda CURRENT_ADDRESS+1
     jsr output_byte
     lda CURRENT_ADDRESS
     jsr output_byte
+
+    lda #':'+128
+    sta (CURRENT_LINE_START),y
+    iny
+
+    // restore A and output
+    pla
+    jsr output_byte
+
+    lda #']'+128
+    sta (CURRENT_LINE_START),y
+    iny
 
     // reset to normal characters
     lda #0
