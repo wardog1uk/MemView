@@ -371,14 +371,9 @@ toggle_selection:
     tax
 
     // move CURRENT_LINE_START to correct row
-!:  lda CURRENT_LINE_START
-    clc
-    adc #SCREEN_WIDTH
-    bcc !+
-    inc CURRENT_LINE_START+1
-!:  sta CURRENT_LINE_START
+!:  jsr move_down
     dex
-    bne !--
+    bne !-
 
     // get byte offset for selected column
     ldx SELECTED_COLUMN
