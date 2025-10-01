@@ -337,13 +337,6 @@ goto_address:
 // Select and display an address
 // ==========================================
 select_address:
-    // reset selection
-    lda #0
-    sta SELECTED_ROW
-    sta SELECTED_COLUMN
-
-    jsr reset_line_start
-
     // display current selection
     jsr toggle_selection
 
@@ -358,33 +351,40 @@ select_address:
     jsr output_selected_address
 
     // get key press
-select_loop:
-    jsr $ffe4
-    beq select_loop
+!:  jsr $ffe4
+    beq !-
 
     // up arrow
 !:  cmp #$91
     bne !+
+    jsr toggle_selection
+    dec SELECTED_ROW
     clc
-    bcc select_loop
+    bcc select_address
 
     // down arrow
 !:  cmp #$11
     bne !+
+    jsr toggle_selection
+    inc SELECTED_ROW
     clc
-    bcc select_loop
+    bcc select_address
 
     // left arrow
 !:  cmp #$9d
     bne !+
+    jsr toggle_selection
+    dec SELECTED_COLUMN
     clc
-    bcc select_loop
+    bcc select_address
 
     // right arrow
 !:  cmp #$1d
     bne !+
+    jsr toggle_selection
+    inc SELECTED_COLUMN
     clc
-    bcc select_loop
+    bcc select_address
 
 !:  jsr show_status_bar
 
@@ -396,6 +396,8 @@ select_loop:
 // Toggle the selection display
 // ==========================================
 toggle_selection:
+    jsr reset_line_start
+
     // calculate row offset on screen
     lda #ROW_START
     clc
