@@ -358,10 +358,35 @@ select_address:
     jsr output_selected_address
 
     // get key press
-!:  jsr $ffe4
-    beq !-
+select_loop:
+    jsr $ffe4
+    beq select_loop
 
-    jsr show_status_bar
+    // up arrow
+!:  cmp #$91
+    bne !+
+    clc
+    bcc select_loop
+
+    // down arrow
+!:  cmp #$11
+    bne !+
+    clc
+    bcc select_loop
+
+    // left arrow
+!:  cmp #$9d
+    bne !+
+    clc
+    bcc select_loop
+
+    // right arrow
+!:  cmp #$1d
+    bne !+
+    clc
+    bcc select_loop
+
+!:  jsr show_status_bar
 
     rts
 // ==========================================
