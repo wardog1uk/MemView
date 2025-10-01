@@ -25,6 +25,7 @@ MemView is a utility that allows you to browse and examine the contents of your 
 | ↑ ↓ | Navigate up/down by one screen |
 | + - | Move forwards/backwards by 1 byte |
 | G | Go to address (prompts for input) |
+| S | Select address (arrows to move) |
 | Q | Quit program |
 
 ## Technical Details
