@@ -55,6 +55,10 @@ TITLE:
 GOTO:
     .text GOTO_TEXT
     .byte 0
+
+// currently selected table location
+SELECTED_ROW: .byte 0
+SELECTED_COLUMN: .byte 0
 // ==========================================
 
 
@@ -212,6 +216,12 @@ update:
     jsr goto_address
     rts
 
+    // S - select address
+!:  cmp #'S'
+    bne !+
+    jsr select_address
+    rts
+
     // Q - exit program
 !:  cmp #'Q'
     bne !+
@@ -312,12 +322,211 @@ goto_address:
     ora START_ADDRESS
     sta START_ADDRESS
 
+    // reset selected row and column
+    lda #0
+    sta SELECTED_ROW
+    sta SELECTED_COLUMN
+
     // restart loop
     clc
     bcc !--
 
     // redraw status bar
 !:  jsr show_status_bar
+
+    rts
+// ==========================================
+
+
+// ==========================================
+// Select and display an address
+// ==========================================
+select_address:
+    // display current selection
+    jsr toggle_selection
+
+    // get address of selected byte
+    jsr get_selected_address
+
+    // load byte at selected address
+    ldy #0
+    lda (CURRENT_ADDRESS),y
+
+    // display status bar
+    jsr output_selected_address
+
+    // get key press
+!:  jsr $ffe4
+    beq !-
+
+    // up arrow
+!:  cmp #$91
+    bne !+
+    jsr toggle_selection
+    ldx SELECTED_ROW
+    beq select_address
+    dec SELECTED_ROW
+    clc
+    bcc select_address
+
+    // down arrow
+!:  cmp #$11
+    bne !+
+    jsr toggle_selection
+    ldx SELECTED_ROW
+    cpx #TABLE_ROWS-1
+    bcs select_address
+    inc SELECTED_ROW
+    clc
+    bcc select_address
+
+    // left arrow
+!:  cmp #$9d
+    bne !+
+    jsr toggle_selection
+    ldx SELECTED_COLUMN
+    beq select_address
+    dec SELECTED_COLUMN
+    clc
+    bcc select_address
+
+    // right arrow
+!:  cmp #$1d
+    bne !+
+    jsr toggle_selection
+    ldx SELECTED_COLUMN
+    cpx #TABLE_COLS-1
+    bcs select_address
+    inc SELECTED_COLUMN
+    clc
+    bcc select_address
+
+!:  jsr show_status_bar
+
+    rts
+// ==========================================
+
+
+// ==========================================
+// Toggle the selection display
+// ==========================================
+toggle_selection:
+    jsr reset_line_start
+
+    // calculate row offset on screen
+    lda #ROW_START
+    clc
+    adc SELECTED_ROW
+    tay
+
+    // move CURRENT_LINE_START to correct row
+!:  jsr move_down
+    dey
+    bne !-
+
+    // get byte offset for selected column
+    ldx SELECTED_COLUMN
+    ldy BYTE_OFFSET,x
+
+    // invert first digit
+    lda (CURRENT_LINE_START),y
+    clc
+    adc #128
+    sta (CURRENT_LINE_START),y
+
+    iny
+
+    // invert second digit
+    lda (CURRENT_LINE_START),y
+    clc
+    adc #128
+    sta (CURRENT_LINE_START),y
+
+    rts
+// ==========================================
+
+
+// ==========================================
+// Point CURRENT_ADDRESS to selected address
+// ==========================================
+get_selected_address:
+    // set current address to start address
+    lda START_ADDRESS+1
+    sta CURRENT_ADDRESS+1
+    lda START_ADDRESS
+
+    // loop for all rows until X is 0
+    ldx SELECTED_ROW
+!:  beq !++
+
+    // add table width
+    clc
+    adc #TABLE_COLS
+    bcc !+
+    inc CURRENT_ADDRESS+1
+
+    // decrement X and restart loop
+!:  dex
+    clc
+    bcc !--
+
+    // add columns
+!:  clc
+    adc SELECTED_COLUMN
+    bcc !+
+    inc CURRENT_ADDRESS+1
+!:  sta CURRENT_ADDRESS
+
+    rts
+// ==========================================
+
+
+// ==========================================
+// Output the selected address status bar
+// ------------------------------------------
+// Displays CURRENT_ADDRESS and A as the byte
+// ==========================================
+output_selected_address:
+    // save A to the stack
+    pha
+
+    // move to status line
+    lda #<STATUS_LINE_START
+    sta CURRENT_LINE_START
+    lda #>STATUS_LINE_START
+    sta CURRENT_LINE_START+1
+
+    // set to output inverted characters
+    lda #128
+    sta CHAR_OFFSET
+
+    ldy #0
+
+    lda #'['+128
+    sta (CURRENT_LINE_START),y
+    iny
+
+    // output address
+    lda CURRENT_ADDRESS+1
+    jsr output_byte
+    lda CURRENT_ADDRESS
+    jsr output_byte
+
+    lda #':'+128
+    sta (CURRENT_LINE_START),y
+    iny
+
+    // restore A and output
+    pla
+    jsr output_byte
+
+    lda #']'+128
+    sta (CURRENT_LINE_START),y
+    iny
+
+    // reset to normal characters
+    lda #0
+    sta CHAR_OFFSET
 
     rts
 // ==========================================
@@ -411,6 +620,8 @@ output_byte:
 
 // ==========================================
 // Convert low byte of A to screen character
+// ------------------------------------------
+// Adds CHAR_OFFSET to screen character
 // ==========================================
 byte_to_char:
     // mask off high byte
@@ -426,7 +637,11 @@ byte_to_char:
     // if > 9 then convert to 'a' to 'f' 
     sbc #'9'
 
-!:  rts
+    // add any offset
+!:  clc
+    adc CHAR_OFFSET: #0
+
+    rts
 // ==========================================
 
 
