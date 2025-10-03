@@ -406,6 +406,14 @@ edit_loop:
 !:  cmp #$0d
     beq !+
 
+    jsr convert_hex_digit
+
+    // not a hex digit
+    bmi edit_loop
+
+    // handle hex digit
+    // ...
+
     clc
     bcc edit_loop
 
