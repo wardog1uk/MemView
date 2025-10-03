@@ -216,10 +216,10 @@ update:
     jsr goto_address
     rts
 
-    // S - select address
-!:  cmp #'S'
+    // E - edit byte
+!:  cmp #'E'
     bne !+
-    jsr select_address
+    jsr edit_byte
     rts
 
     // Q - exit program
@@ -339,9 +339,9 @@ goto_address:
 
 
 // ==========================================
-// Select and display an address
+// Select and edit a byte
 // ==========================================
-select_address:
+edit_byte:
     // display current selection
     jsr toggle_selection
 
@@ -364,10 +364,10 @@ select_address:
     bne !+
     jsr toggle_selection
     ldx SELECTED_ROW
-    beq select_address
+    beq edit_byte
     dec SELECTED_ROW
     clc
-    bcc select_address
+    bcc edit_byte
 
     // down arrow
 !:  cmp #$11
@@ -375,20 +375,20 @@ select_address:
     jsr toggle_selection
     ldx SELECTED_ROW
     cpx #TABLE_ROWS-1
-    bcs select_address
+    bcs edit_byte
     inc SELECTED_ROW
     clc
-    bcc select_address
+    bcc edit_byte
 
     // left arrow
 !:  cmp #$9d
     bne !+
     jsr toggle_selection
     ldx SELECTED_COLUMN
-    beq select_address
+    beq edit_byte
     dec SELECTED_COLUMN
     clc
-    bcc select_address
+    bcc edit_byte
 
     // right arrow
 !:  cmp #$1d
@@ -396,10 +396,10 @@ select_address:
     jsr toggle_selection
     ldx SELECTED_COLUMN
     cpx #TABLE_COLS-1
-    bcs select_address
+    bcs edit_byte
     inc SELECTED_COLUMN
     clc
-    bcc select_address
+    bcc edit_byte
 
 !:  jsr show_status_bar
 
