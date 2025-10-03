@@ -411,12 +411,30 @@ edit_loop:
     // not a hex digit
     bmi edit_loop
 
-    // handle hex digit
-    // ...
+    // store hex value
+    sta edit_value
 
+    // get current byte
+    ldy #0
+    lda (CURRENT_ADDRESS),y
+
+    // shift left
+    asl
+    asl
+    asl
+    asl
+
+    // add hex value to byte
+    ora edit_value: #0
+
+    // write byte back to memory
+    sta (CURRENT_ADDRESS),y
+
+    // restart loop
     clc
     bcc edit_loop
 
+    // redraw status bar and exit routine
 !:  jsr show_status_bar
 
     rts
