@@ -348,6 +348,7 @@ edit_byte:
     // get address of selected byte
     jsr get_selected_address
 
+edit_loop:
     // load byte at selected address
     ldy #0
     lda (CURRENT_ADDRESS),y
@@ -400,6 +401,13 @@ edit_byte:
     inc SELECTED_COLUMN
     clc
     bcc edit_byte
+
+    // return key
+!:  cmp #$0d
+    beq !+
+
+    clc
+    bcc edit_loop
 
 !:  jsr show_status_bar
 
