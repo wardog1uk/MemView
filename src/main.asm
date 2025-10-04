@@ -427,8 +427,22 @@ edit_loop:
     // add hex value to byte
     ora edit_value: #0
 
-    // write byte back to memory
+    // write new byte to memory
     sta (CURRENT_ADDRESS),y
+
+    // save byte
+    pha
+
+    // move to correct place
+    jsr toggle_selection
+    dey
+
+    // output byte
+    pla
+    jsr output_byte
+
+    // invert selection
+    jsr toggle_selection
 
     // restart loop
     clc
