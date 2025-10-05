@@ -216,10 +216,10 @@ update:
     jsr goto_address
     rts
 
-    // S - select address
-!:  cmp #'S'
+    // E - edit byte
+!:  cmp #'E'
     bne !+
-    jsr select_address
+    jsr edit_byte
     rts
 
     // Q - exit program
@@ -339,15 +339,16 @@ goto_address:
 
 
 // ==========================================
-// Select and display an address
+// Select and edit a byte
 // ==========================================
-select_address:
+edit_byte:
     // display current selection
     jsr toggle_selection
 
     // get address of selected byte
     jsr get_selected_address
 
+edit_loop:
     // load byte at selected address
     ldy #0
     lda (CURRENT_ADDRESS),y
@@ -364,10 +365,10 @@ select_address:
     bne !+
     jsr toggle_selection
     ldx SELECTED_ROW
-    beq select_address
+    beq edit_byte
     dec SELECTED_ROW
     clc
-    bcc select_address
+    bcc edit_byte
 
     // down arrow
 !:  cmp #$11
@@ -375,20 +376,20 @@ select_address:
     jsr toggle_selection
     ldx SELECTED_ROW
     cpx #TABLE_ROWS-1
-    bcs select_address
+    bcs edit_byte
     inc SELECTED_ROW
     clc
-    bcc select_address
+    bcc edit_byte
 
     // left arrow
 !:  cmp #$9d
     bne !+
     jsr toggle_selection
     ldx SELECTED_COLUMN
-    beq select_address
+    beq edit_byte
     dec SELECTED_COLUMN
     clc
-    bcc select_address
+    bcc edit_byte
 
     // right arrow
 !:  cmp #$1d
@@ -396,11 +397,58 @@ select_address:
     jsr toggle_selection
     ldx SELECTED_COLUMN
     cpx #TABLE_COLS-1
-    bcs select_address
+    bcs edit_byte
     inc SELECTED_COLUMN
     clc
-    bcc select_address
+    bcc edit_byte
 
+    // return key
+!:  cmp #$0d
+    beq !+
+
+    jsr convert_hex_digit
+
+    // not a hex digit
+    bmi edit_loop
+
+    // store hex value
+    sta edit_value
+
+    // get current byte
+    ldy #0
+    lda (CURRENT_ADDRESS),y
+
+    // shift left
+    asl
+    asl
+    asl
+    asl
+
+    // add hex value to byte
+    ora edit_value: #0
+
+    // write new byte to memory
+    sta (CURRENT_ADDRESS),y
+
+    // save byte
+    pha
+
+    // move to correct place
+    jsr toggle_selection
+    dey
+
+    // output byte
+    pla
+    jsr output_byte
+
+    // invert selection
+    jsr toggle_selection
+
+    // restart loop
+    clc
+    bcc edit_loop
+
+    // redraw status bar and exit routine
 !:  jsr show_status_bar
 
     rts

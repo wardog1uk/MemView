@@ -1,10 +1,10 @@
 # MemView
 
-A hexadecimal memory viewer for the Commodore 64, written in 6502 assembly language.
+A hexadecimal memory viewer and editor for the Commodore 64, written in 6502 assembly language.
 
 ## Overview
 
-MemView is a utility that allows you to browse and examine the contents of your Commodore 64's memory in real-time. It displays memory contents in both hexadecimal and ASCII format, making it useful for debugging, reverse engineering, and understanding how programs use memory.
+MemView is a utility that allows you to browse, examine, and edit the contents of your Commodore 64's memory in real-time. It displays memory contents in both hexadecimal and ASCII format, making it useful for debugging, reverse engineering, and understanding how programs use memory.
 
 ## Features
 
@@ -14,6 +14,11 @@ MemView is a utility that allows you to browse and examine the contents of your 
   - Arrow keys for moving through memory pages
   - Plus/minus keys for fine-grained navigation
   - 'G' command for jumping to specific addresses
+- **Edit Memory**:
+  - Arrow keys for moving around memory on screen
+  - See selected address and its current value on the status bar
+  - Input hexadecimal values to edit selected address
+  - Press return key to exit edit mode
 - **Real-time Viewing**: Memory contents update dynamically
 - **Clean Interface**: Simple, efficient display optimized for the C64's 40x25 screen
 
@@ -25,7 +30,7 @@ MemView is a utility that allows you to browse and examine the contents of your 
 | ↑ ↓ | Navigate up/down by one screen |
 | + - | Move forwards/backwards by 1 byte |
 | G | Go to address (prompts for input) |
-| S | Select address (arrows to move) |
+| E | Edit byte (← → ↑ ↓ to move then enter hex value) |
 | Q | Quit program |
 
 ## Technical Details
