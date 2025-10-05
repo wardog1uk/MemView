@@ -537,6 +537,7 @@ get_selected_address:
 output_selected_address:
     // save A to the stack
     pha
+    pha
 
     // move to status line
     lda #<STATUS_LINE_START
@@ -564,9 +565,17 @@ output_selected_address:
     sta (CURRENT_LINE_START),y
     iny
 
-    // restore A and output
+    // restore A and output hex value
     pla
     jsr output_byte
+
+    lda #','+128
+    sta (CURRENT_LINE_START),y
+    iny
+
+    // restore A and output decimal value
+    pla
+    jsr output_decimal
 
     lda #']'+128
     sta (CURRENT_LINE_START),y
@@ -746,4 +755,58 @@ convert_hex_digit:
     // good - clear negative flag
 !:  ldx #0
     rts
+// ==========================================
+
+
+// ==========================================
+// Output decimal value of the byte in A
+// ------------------------------------------
+// Writes to current line from position Y
+// ==========================================
+output_decimal:
+    // save A to the stack
+    pha
+    pha
+
+    // Start with highest power (100)
+    ldx #2
+
+decimal_loop:
+    // store zero character in current_digit
+    lda #'0'+128
+    sta current_digit
+
+    // restore A from the stack
+    pla
+
+    // check if A is < current power
+!:  cmp powers,x
+    bcc !+
+
+    // else increment digit, subtract power from A and check again
+    inc current_digit
+    sec
+    sbc powers,x
+    bcs !-
+
+    // save remainder to the stack
+!:  pha
+
+    // output digit to screen
+    lda current_digit
+    sta (CURRENT_LINE_START),y
+    iny
+
+    // loop for all digits
+    dex
+    bpl decimal_loop
+
+    // remove last value and restore original A
+    pla
+    pla
+
+    rts
+
+current_digit: .byte 0
+powers: .byte 1, 10, 100    // Powers of 10: 10^0, 10^1, 10^2
 // ==========================================
