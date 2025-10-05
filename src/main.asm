@@ -538,6 +538,7 @@ output_selected_address:
     // save A to the stack
     pha
     pha
+    pha
 
     // move to status line
     lda #<STATUS_LINE_START
@@ -576,6 +577,14 @@ output_selected_address:
     // restore A and output decimal value
     pla
     jsr output_decimal
+
+    lda #','+128
+    sta (CURRENT_LINE_START),y
+    iny
+
+    // restore A and output binary value
+    pla
+    jsr output_binary
 
     lda #']'+128
     sta (CURRENT_LINE_START),y
@@ -809,4 +818,44 @@ decimal_loop:
 
 current_digit: .byte 0
 powers: .byte 1, 10, 100    // Powers of 10: 10^0, 10^1, 10^2
+// ==========================================
+
+
+// ==========================================
+// Output binary value of the byte in A
+// ------------------------------------------
+// Writes to current line from position Y
+// ==========================================
+output_binary:
+    // save A to the stack
+    pha
+
+    // set loop counter and offset
+    ldx #8
+
+    // shift value left so highest bit goes into carry
+!:  asl
+
+    // save value to the stack
+    pha
+
+    // set A to '0' or '1' by adding the carry bit
+    lda #'0'+128
+    adc #0
+
+    // output to screen
+!:  sta (CURRENT_LINE_START),y
+    iny
+
+    // restore value
+    pla
+
+    // loop for all bits
+    dex
+    bne !--
+
+    // restore original A
+    pla
+
+    rts
 // ==========================================
