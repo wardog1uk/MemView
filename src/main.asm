@@ -227,6 +227,8 @@ update:
     bne !+
     pla
     pla
+    lda #$93
+    jsr $ffd2
     rts
 
     // return to start
