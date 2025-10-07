@@ -1,6 +1,10 @@
-BasicUpstart2(start)
-*=* "Start"
-
+#if C000
+    *=$c000 "MemView"
+    jmp start
+#else
+    BasicUpstart2(start)
+    *=* "MemView"
+#endif
 
 // ==========================================
 // Constants
