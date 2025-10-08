@@ -15,6 +15,7 @@ MemView is a utility that allows you to browse, examine, and edit the contents o
   - Plus/minus keys for fine-grained navigation
   - 'G' command for jumping to specific addresses
 - **Edit Memory**:
+  - 'E' command for entering edit mode
   - Arrow keys for moving around memory on screen
   - See selected address and its current value on the status bar
   - Input hexadecimal values to edit selected address
