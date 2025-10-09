@@ -499,6 +499,24 @@ edit_loop:
 !:  cmp #$0d
     beq !+
 
+    // check for and handle hex digit
+    jsr hex_input_when_editing
+
+    // restart loop
+    clc
+    bcc edit_loop
+
+    // redraw status bar and exit routine
+!:  jsr show_status_bar
+
+    rts
+// ==========================================
+
+
+// ==========================================
+// Handle hex input when in edit mode
+// ==========================================
+hex_input_when_editing:
     jsr convert_hex_digit
 
     // not a hex digit
@@ -536,13 +554,6 @@ edit_loop:
 
     // invert selection
     jsr toggle_selection
-
-    // restart loop
-    clc
-    bcc edit_loop
-
-    // redraw status bar and exit routine
-!:  jsr show_status_bar
 
     rts
 // ==========================================
