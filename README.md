@@ -33,6 +33,7 @@ MemView is a utility that allows you to browse, examine, and edit the contents o
 | G | Go to address (prompts for input) |
 | E | Edit byte (← → ↑ ↓ to move then enter hex value) |
 | Q | Quit program |
+| F1 | Show help message |
 
 ## Technical Details
 

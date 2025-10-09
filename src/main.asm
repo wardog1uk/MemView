@@ -36,7 +36,9 @@
 .const STATUS_LINE_START = SCREEN_RAM + (SCREEN_HEIGHT * SCREEN_WIDTH)
 
 .const TITLE_TEXT = "memory viewer"
+.const CREDIT_TEXT = "by jonathan mathews 2025"
 .const GOTO_TEXT = "goto:"
+.const HELP_TEXT = "arrows+- to move, (g)o, (e)dit, (q)uit"
 // ==========================================
 
 
@@ -56,8 +58,16 @@ TITLE:
     .text TITLE_TEXT
     .byte 0
 
+CREDIT:
+    .text CREDIT_TEXT
+    .byte 0
+
 GOTO:
     .text GOTO_TEXT
+    .byte 0
+
+HELP:
+    .text HELP_TEXT
     .byte 0
 
 // currently selected table location
@@ -104,7 +114,15 @@ show_title:
     clc
     bcc !-
 
-!:  rts
+!:  ldy #SCREEN_WIDTH-2
+    lda #'f'+128
+    sta (CURRENT_LINE_START),y
+    iny
+    lda #'1'+128
+    sta (CURRENT_LINE_START),y
+    iny
+
+    rts
 // ==========================================
 
 
@@ -226,6 +244,12 @@ update:
     jsr edit_byte
     rts
 
+    // F1 - show help
+!:  cmp #$85
+    bne !+
+    jsr show_help
+    rts
+
     // Q - exit program
 !:  cmp #'Q'
     bne !+
@@ -339,6 +363,69 @@ goto_address:
 
     // redraw status bar
 !:  jsr show_status_bar
+
+    rts
+// ==========================================
+
+
+// ==========================================
+// Show help text
+// ==========================================
+show_help:
+    // update title line
+    jsr reset_line_start
+    jsr clear_line
+
+    ldy #1
+    ldx #0
+!:  lda TITLE,x
+    beq !+
+    clc
+    adc #128
+    sta (CURRENT_LINE_START),y
+    iny
+    inx
+    clc
+    bcc !-
+
+!:  iny
+    ldx #0
+!:  lda CREDIT,x
+    beq !+
+    clc
+    adc #128
+    sta (CURRENT_LINE_START),y
+    iny
+    inx
+    clc
+    bcc !-
+
+    // move to status line
+!:  lda #<STATUS_LINE_START
+    sta CURRENT_LINE_START
+    lda #>STATUS_LINE_START
+    sta CURRENT_LINE_START+1
+
+    ldy #1
+    ldx #0
+
+    // output help text
+!:  lda HELP,x
+    beq !+
+    clc
+    adc #128
+    sta (CURRENT_LINE_START),y
+    iny
+    inx
+    clc
+    bcc !-
+
+    // get key press
+!:  jsr $ffe4
+    beq !-
+
+    jsr show_title
+    jsr show_status_bar
 
     rts
 // ==========================================
