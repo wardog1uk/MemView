@@ -541,6 +541,9 @@ hex_input_when_editing:
     // write new byte to memory
     sta (CURRENT_ADDRESS),y
 
+    // reload byte from memory in case it wasn't written
+    lda (CURRENT_ADDRESS),y
+
     // save byte
     pha
 
