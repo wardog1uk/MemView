@@ -2,6 +2,8 @@
 
 A hexadecimal memory viewer and editor for the Commodore 64, written in 6502 assembly language.
 
+![Edit Screen](./screen2.png)
+
 ## Overview
 
 MemView is a utility that allows you to browse, examine, and edit the contents of your Commodore 64's memory in real-time. It displays memory contents in both hexadecimal and ASCII format, making it useful for debugging, reverse engineering, and understanding how programs use memory.
