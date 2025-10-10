@@ -567,6 +567,23 @@ hex_input_when_editing:
 // ==========================================
 show_selection:
     jsr toggle_selection
+
+    // draw right side bar
+    iny
+    lda #$75
+    sta (CURRENT_LINE_START),y
+
+    // draw left side bar
+    dey
+    dey
+    dey
+    lda #$76
+    sta (CURRENT_LINE_START),y
+
+    // restore y
+    iny
+    iny
+
     rts
 // ==========================================
 
@@ -576,6 +593,22 @@ show_selection:
 // ==========================================
 hide_selection:
     jsr toggle_selection
+
+    // hide right side bar
+    iny
+    lda #' '
+    sta (CURRENT_LINE_START),y
+
+    // hide left side bar
+    dey
+    dey
+    dey
+    sta (CURRENT_LINE_START),y
+
+    // restore y
+    iny
+    iny
+
     rts
 // ==========================================
 
