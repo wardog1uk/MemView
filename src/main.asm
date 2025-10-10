@@ -436,7 +436,7 @@ show_help:
 // ==========================================
 edit_byte:
     // display current selection
-    jsr toggle_selection
+    jsr show_selection
 
     // get address of selected byte
     jsr get_selected_address
@@ -456,7 +456,7 @@ edit_loop:
     // up arrow
 !:  cmp #$91
     bne !+
-    jsr toggle_selection
+    jsr hide_selection
     ldx SELECTED_ROW
     beq edit_byte
     dec SELECTED_ROW
@@ -466,7 +466,7 @@ edit_loop:
     // down arrow
 !:  cmp #$11
     bne !+
-    jsr toggle_selection
+    jsr hide_selection
     ldx SELECTED_ROW
     cpx #TABLE_ROWS-1
     bcs edit_byte
@@ -477,7 +477,7 @@ edit_loop:
     // left arrow
 !:  cmp #$9d
     bne !+
-    jsr toggle_selection
+    jsr hide_selection
     ldx SELECTED_COLUMN
     beq edit_byte
     dec SELECTED_COLUMN
@@ -487,7 +487,7 @@ edit_loop:
     // right arrow
 !:  cmp #$1d
     bne !+
-    jsr toggle_selection
+    jsr hide_selection
     ldx SELECTED_COLUMN
     cpx #TABLE_COLS-1
     bcs edit_byte
@@ -548,7 +548,7 @@ hex_input_when_editing:
     pha
 
     // move to correct place
-    jsr toggle_selection
+    jsr hide_selection
     dey
 
     // output byte
@@ -556,8 +556,26 @@ hex_input_when_editing:
     jsr output_byte
 
     // invert selection
-    jsr toggle_selection
+    jsr show_selection
 
+    rts
+// ==========================================
+
+
+// ==========================================
+// Show cursor for selected byte
+// ==========================================
+show_selection:
+    jsr toggle_selection
+    rts
+// ==========================================
+
+
+// ==========================================
+// Hide cursor for selected byte
+// ==========================================
+hide_selection:
+    jsr toggle_selection
     rts
 // ==========================================
 
