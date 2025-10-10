@@ -506,8 +506,10 @@ edit_loop:
     clc
     bcc edit_loop
 
+!:  jsr hide_selection
+
     // redraw status bar and exit routine
-!:  jsr show_status_bar
+    jsr show_status_bar
 
     rts
 // ==========================================
