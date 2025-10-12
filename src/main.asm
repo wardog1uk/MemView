@@ -520,12 +520,13 @@ edit_loop:
 // ==========================================
 hex_input_when_editing:
     jsr convert_hex_digit
+    bpl !+
 
     // not a hex digit
-    bmi edit_loop
+    rts
 
     // store hex value
-    sta edit_value
+!:  sta edit_value
 
     // get current byte
     ldy #0
