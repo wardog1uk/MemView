@@ -80,9 +80,7 @@ SELECTED_COLUMN: .byte 0
 // Program Entry
 // ==========================================
 start:
-    lda #$93
-    jsr $ffd2
-
+    jsr clear_screen
     jsr show_title
     jsr show_status_bar
 
@@ -90,6 +88,16 @@ start:
     jsr update
     clc
     bcc !-
+// ==========================================
+
+
+// ==========================================
+// Clear the screen
+// ==========================================
+clear_screen:
+    lda #$93
+    jsr $ffd2
+    rts
 // ==========================================
 
 
@@ -255,8 +263,7 @@ update:
     bne !+
     pla
     pla
-    lda #$93
-    jsr $ffd2
+    jsr clear_screen
     rts
 
     // return to start
