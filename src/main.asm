@@ -808,6 +808,23 @@ output_selected_address:
     lda #0
     sta CHAR_OFFSET
 
+    // output run text
+    ldy #SCREEN_WIDTH-5
+    lda #'('+128
+    sta (CURRENT_LINE_START),y
+    iny
+    lda #'r'+128
+    sta (CURRENT_LINE_START),y
+    iny
+    lda #')'+128
+    sta (CURRENT_LINE_START),y
+    iny
+    lda #'u'+128
+    sta (CURRENT_LINE_START),y
+    iny
+    lda #'n'+128
+    sta (CURRENT_LINE_START),y
+
     rts
 // ==========================================
 
