@@ -41,5 +41,5 @@ MemView is a utility that allows you to browse, examine, and edit the contents o
 
 - **Language**: 6502 Assembly (KickAssembler syntax)
 - **Target**: Commodore 64
-- **Memory Usage**: Minimal footprint, uses zero page locations $FB-$FE
+- **Memory Usage**: Minimal footprint, uses zero page locations $C9 and $D1
 - **Screen Mode**: Standard text mode (40x25 characters)

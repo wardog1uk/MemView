@@ -27,10 +27,10 @@
 .const ROW_START = 2
 
 // pointer to current line in screen memory
-.const CURRENT_LINE_START = $fb
+.const CURRENT_LINE_START = $d1 // PNT
 
 // pointer to address being written
-.const CURRENT_ADDRESS = $fd
+.const CURRENT_ADDRESS = $c9    // LXSP
 
 // Address for the start of the status line
 .const STATUS_LINE_START = SCREEN_RAM + (SCREEN_HEIGHT * SCREEN_WIDTH)
