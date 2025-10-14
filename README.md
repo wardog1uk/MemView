@@ -21,6 +21,7 @@ MemView is a utility that allows you to browse, examine, and edit the contents o
   - Arrow keys for moving around memory on screen
   - See selected address and its current value on the status bar
   - Input hexadecimal values to edit selected address
+  - 'R' command to JMP to and run from current selected address
   - Press return key to exit edit mode
 - **Real-time Viewing**: Memory contents update dynamically
 - **Clean Interface**: Simple, efficient display optimized for the C64's 40x25 screen
