@@ -563,6 +563,7 @@ edit_loop:
 // Start execution at the current address
 // ==========================================
 execute:
+    jmp (CURRENT_ADDRESS)
     rts
 // ==========================================
 
