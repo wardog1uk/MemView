@@ -455,6 +455,14 @@ show_help:
 // Select and edit a byte
 // ==========================================
 edit_byte:
+    // hide "F1" from title bar
+    jsr reset_line_start
+    lda #' '+128
+    ldy #SCREEN_WIDTH-2
+    sta (CURRENT_LINE_START),y
+    iny
+    sta (CURRENT_LINE_START),y
+
     // display current selection
     jsr show_selection
 
@@ -527,6 +535,15 @@ edit_loop:
     bcc edit_loop
 
 !:  jsr hide_selection
+
+    // put "F1" back on title bar
+    jsr reset_line_start
+    lda #'f'+128
+    ldy #SCREEN_WIDTH-2
+    sta (CURRENT_LINE_START),y
+    lda #'1'+128
+    iny
+    sta (CURRENT_LINE_START),y
 
     // redraw status bar and exit routine
     jsr show_status_bar
