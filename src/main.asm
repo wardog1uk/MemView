@@ -523,6 +523,13 @@ edit_loop:
     clc
     bcc edit_byte
 
+!:  cmp #'R'
+    bne !+
+    jsr hide_selection
+    jsr execute
+    clc
+    bcc edit_byte
+
     // return key
 !:  cmp #$0d
     beq !+
@@ -548,6 +555,14 @@ edit_loop:
     // redraw status bar and exit routine
     jsr show_status_bar
 
+    rts
+// ==========================================
+
+
+// ==========================================
+// Start execution at the current address
+// ==========================================
+execute:
     rts
 // ==========================================
 
