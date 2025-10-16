@@ -523,6 +523,13 @@ edit_loop:
     clc
     bcc edit_byte
 
+!:  cmp #'R'
+    bne !+
+    jsr hide_selection
+    jsr execute
+    clc
+    bcc edit_byte
+
     // return key
 !:  cmp #$0d
     beq !+
@@ -548,6 +555,15 @@ edit_loop:
     // redraw status bar and exit routine
     jsr show_status_bar
 
+    rts
+// ==========================================
+
+
+// ==========================================
+// Start execution at the current address
+// ==========================================
+execute:
+    jmp (CURRENT_ADDRESS)
     rts
 // ==========================================
 
@@ -791,6 +807,23 @@ output_selected_address:
     // reset to normal characters
     lda #0
     sta CHAR_OFFSET
+
+    // output run text
+    ldy #SCREEN_WIDTH-5
+    lda #'('+128
+    sta (CURRENT_LINE_START),y
+    iny
+    lda #'r'+128
+    sta (CURRENT_LINE_START),y
+    iny
+    lda #')'+128
+    sta (CURRENT_LINE_START),y
+    iny
+    lda #'u'+128
+    sta (CURRENT_LINE_START),y
+    iny
+    lda #'n'+128
+    sta (CURRENT_LINE_START),y
 
     rts
 // ==========================================
