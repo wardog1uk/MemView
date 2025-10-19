@@ -39,6 +39,14 @@
 .const CREDIT_TEXT = "by jonathan mathews 2025"
 .const GOTO_TEXT = "goto:"
 .const HELP_TEXT = "arrows+- to move, (g)o, (e)dit, (q)uit"
+
+// Keyboard codes
+.const ARROW_UP = $91
+.const ARROW_DOWN = $11
+.const ARROW_RIGHT = $1d
+.const ARROW_LEFT = $9d
+.const F1 = $85
+.const RETURN = $0d
 // ==========================================
 
 
@@ -212,28 +220,28 @@ update:
     beq !-
 
     // right arrow
-    cmp #$1d
+    cmp #ARROW_RIGHT
     bne !+
     lda #TABLE_COLS
     jsr increase_start_address
     rts
 
     // left arrow
-!:  cmp #$9d
+!:  cmp #ARROW_LEFT
     bne !+
     lda #TABLE_COLS
     jsr decrease_start_address
     rts
 
     // up arrow
-!:  cmp #$91
+!:  cmp #ARROW_UP
     bne !+
     lda #TABLE_COLS * TABLE_ROWS
     jsr decrease_start_address
     rts
 
     // down arrow
-!:  cmp #$11
+!:  cmp #ARROW_DOWN
     bne !+
     lda #TABLE_COLS * TABLE_ROWS
     jsr increase_start_address
@@ -266,7 +274,7 @@ update:
     rts
 
     // F1 - show help
-!:  cmp #$85
+!:  cmp #F1
     bne !+
     jsr show_help
     rts
@@ -482,7 +490,7 @@ edit_loop:
     beq !-
 
     // up arrow
-!:  cmp #$91
+!:  cmp #ARROW_UP
     bne !+
     jsr hide_selection
     ldx SELECTED_ROW
@@ -492,7 +500,7 @@ edit_loop:
     bcc edit_byte
 
     // down arrow
-!:  cmp #$11
+!:  cmp #ARROW_DOWN
     bne !+
     jsr hide_selection
     ldx SELECTED_ROW
@@ -503,7 +511,7 @@ edit_loop:
     bcc edit_byte
 
     // left arrow
-!:  cmp #$9d
+!:  cmp #ARROW_LEFT
     bne !+
     jsr hide_selection
     ldx SELECTED_COLUMN
@@ -513,7 +521,7 @@ edit_loop:
     bcc edit_byte
 
     // right arrow
-!:  cmp #$1d
+!:  cmp #ARROW_RIGHT
     bne !+
     jsr hide_selection
     ldx SELECTED_COLUMN
@@ -531,7 +539,7 @@ edit_loop:
     bcc edit_byte
 
     // return key
-!:  cmp #$0d
+!:  cmp #RETURN
     beq !+
 
     // check for and handle hex digit
