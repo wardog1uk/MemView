@@ -103,18 +103,14 @@ start:
 // Clear the screen
 // ==========================================
 clear_screen:
-    lda #' '
-    ldy #$0
-
-    // write a space to every position
-!:  sta SCREEN_RAM,y
-    sta SCREEN_RAM+256,y
-    sta SCREEN_RAM+512,y
-    sta SCREEN_RAM+768,y
-    iny
+    ldx #0
+!:  jsr $e9ff
+    inx
+    cpx #25
     bne !-
 
     // reset basic cursor
+    ldy #0
     sty $d3
     sty $d6
 
