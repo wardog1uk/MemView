@@ -30,8 +30,8 @@ MemView is a utility that allows you to browse, examine, and edit the contents o
 
 | Key | Action |
 |-----|--------|
-| ← → | Navigate left/right by 8 bytes |
-| ↑ ↓ | Navigate up/down by one screen |
+| ← → | Move up/down by one row |
+| ↑ ↓ | Move up/down by one screen |
 | + - | Move forwards/backwards by 1 byte |
 | G | Go to address (prompts for input) |
 | E | Edit byte (← → ↑ ↓ to move then enter hex value) |
