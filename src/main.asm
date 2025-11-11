@@ -46,6 +46,7 @@
 .const ARROW_RIGHT = $1d
 .const ARROW_LEFT = $9d
 .const F1 = $85
+.const F2 = $89
 .const RETURN = $0d
 // ==========================================
 
@@ -273,6 +274,14 @@ update:
 !:  cmp #F1
     bne !+
     jsr show_help
+    rts
+
+    // F2 - toggle memory bank
+!:  cmp #F2
+    bne !+
+    lda $01
+    eor #%00000001
+    sta $01
     rts
 
     // Q - exit program
