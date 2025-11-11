@@ -38,7 +38,7 @@
 .const TITLE_TEXT = "memory viewer"
 .const CREDIT_TEXT = "by jonathan mathews 2025"
 .const GOTO_TEXT = "goto:"
-.const HELP_TEXT = "arrows+- to move, (g)o, (e)dit, (q)uit"
+.const HELP_TEXT = "arrows+- to move, (g)o, (e)dit, (q)uit "
 
 // Keyboard codes
 .const ARROW_UP = $91
@@ -162,7 +162,18 @@ show_status_bar:
     sta CURRENT_LINE_START+1
 
     jsr clear_line
-    rts
+
+    // check if $0 has bit 0 set
+    lda $1
+    and #1
+    bne !+
+
+    // write an M to the bottom right corner
+    ldy #SCREEN_WIDTH-1
+    lda #'m'+128
+    sta (CURRENT_LINE_START),y
+
+!:  rts
 // ==========================================
 
 
@@ -282,6 +293,7 @@ update:
     lda $01
     eor #%00000001
     sta $01
+    jsr show_status_bar
     rts
 
     // Q - exit program
