@@ -37,6 +37,7 @@ MemView is a utility that allows you to browse, examine, and edit the contents o
 | E | Edit byte (← → ↑ ↓ to move then enter hex value) |
 | Q | Quit program |
 | F1 | Show help message |
+| F2 | Toggle LORAM (A000-BFFF) |
 
 ## Technical Details
 
