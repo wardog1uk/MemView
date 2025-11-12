@@ -168,9 +168,9 @@ show_status_bar:
     and #1
     bne !+
 
-    // write an M to the bottom right corner
+    // write an L to the bottom right corner
     ldy #SCREEN_WIDTH-1
-    lda #'m'+128
+    lda #'l'+128
     sta (CURRENT_LINE_START),y
 
 !:  rts
