@@ -287,7 +287,7 @@ update:
     jsr show_help
     rts
 
-    // F2 - toggle memory bank
+    // F2 - toggle LORAM memory bank
 !:  cmp #F2
     bne !+
     lda $01
