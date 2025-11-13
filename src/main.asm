@@ -38,7 +38,7 @@
 .const TITLE_TEXT = "memory viewer"
 .const CREDIT_TEXT = "by jonathan mathews 2025"
 .const GOTO_TEXT = "goto:"
-.const HELP_TEXT = "arrows+- to move, (g)o, (e)dit, (q)uit"
+.const HELP_TEXT = "arrows+- to move, (g)o, (e)dit, (q)uit "
 
 // Keyboard codes
 .const ARROW_UP = $91
@@ -46,6 +46,7 @@
 .const ARROW_RIGHT = $1d
 .const ARROW_LEFT = $9d
 .const F1 = $85
+.const F3 = $86
 .const RETURN = $0d
 // ==========================================
 
@@ -161,7 +162,18 @@ show_status_bar:
     sta CURRENT_LINE_START+1
 
     jsr clear_line
-    rts
+
+    // check if $0 has bit 0 set
+    lda $1
+    and #1
+    bne !+
+
+    // write an L to the bottom right corner
+    ldy #SCREEN_WIDTH-1
+    lda #'l'+128
+    sta (CURRENT_LINE_START),y
+
+!:  rts
 // ==========================================
 
 
@@ -273,6 +285,15 @@ update:
 !:  cmp #F1
     bne !+
     jsr show_help
+    rts
+
+    // F3 - toggle LORAM memory bank
+!:  cmp #F3
+    bne !+
+    lda $01
+    eor #%00000001
+    sta $01
+    jsr show_status_bar
     rts
 
     // Q - exit program
