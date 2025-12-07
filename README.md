@@ -45,3 +45,18 @@ MemView is a utility that allows you to browse, examine, and edit the contents o
 - **Target**: Commodore 64
 - **Memory Usage**: Minimal footprint, uses zero page locations $C9 and $D1
 - **Screen Mode**: Standard text mode (40x25 characters)
+
+## Example
+
+Press `E` to enter edit mode and input the following bytes at a writable memory location (e.g., $C000):
+
+``` EE 20 D0 60 ```
+
+Move the cursor back to the first byte and press `R` to run the code you just entered.
+
+You could also press enter to exit edit mode and `Q` to quit the program, then type `SYS 49152` to execute your code (if you put the first byte at $C000).
+
+    EE 20 D0  ; JSR $D020 (Set border color)
+    60        ; RTS
+
+Try changing the $20 to a $21.
