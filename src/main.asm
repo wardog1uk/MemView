@@ -104,7 +104,7 @@ start:
     jsr show_status_bar
 
 !:  jsr output_screen_data
-    jsr update
+    jsr get_user_input
     clc
     bcc !-
 // ==========================================
@@ -232,11 +232,19 @@ output_screen_data:
 // ==========================================
 // Get and process user input
 // ==========================================
-update:
+get_user_input:
     // wait for key press
     jsr $ffe4
-    beq update
+    beq get_user_input
 
+    jsr process_input
+
+    rts
+// ==========================================
+
+
+// ==========================================
+process_input:
     // right arrow
     cmp #ARROW_RIGHT
     bne !+
@@ -310,10 +318,10 @@ update:
 
 // ==========================================
 exit_program:
-    pla
-    pla
-    pla
-    pla
+    ldx #6
+!:  pla
+    dex
+    bne !-
     jsr clear_screen
     rts
 // ==========================================
@@ -487,7 +495,7 @@ goto_address:
 // Show help text
 // ==========================================
 show_help:
-    // update title line
+    // get_user_input title line
     jsr reset_line_start
     jsr clear_line
 
