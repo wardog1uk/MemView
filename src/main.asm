@@ -224,8 +224,8 @@ output_screen_data:
 // ==========================================
 update:
     // wait for key press
-!:  jsr $ffe4
-    beq !-
+    jsr $ffe4
+    beq update
 
     // right arrow
     cmp #ARROW_RIGHT
