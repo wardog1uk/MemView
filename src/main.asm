@@ -82,6 +82,16 @@ HELP:
 // currently selected table location
 SELECTED_ROW: .byte 0
 SELECTED_COLUMN: .byte 0
+
+// Table of valid keys
+input_keys: .byte ARROW_RIGHT, ARROW_LEFT, ARROW_UP, ARROW_DOWN, '+', '-', 'G', 'E', F1, F3, 'Q', $0
+
+// Addresses of routines for each key
+actions_low:  .byte <arrow_right, <arrow_left, <arrow_up, <arrow_down, <plus_key, <minus_key
+              .byte <goto_address, <edit_byte, <show_help, <toggle_loram, <exit_program
+actions_high: .byte >arrow_right, >arrow_left, >arrow_up, >arrow_down, >plus_key, >minus_key
+              .byte >goto_address, >edit_byte, >show_help, >toggle_loram, >exit_program
+
 // ==========================================
 
 
