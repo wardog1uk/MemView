@@ -237,6 +237,7 @@ get_user_input:
     jsr $ffe4
     beq get_user_input
 
+    ldx #0
     jsr process_input
 
     rts
@@ -244,75 +245,32 @@ get_user_input:
 
 
 // ==========================================
+// Check for key input and jump to action
+// Starts from position X in input_keys
+// ==========================================
 process_input:
-    // right arrow
-    cmp #ARROW_RIGHT
+    // return if no more input keys to check
+    ldy input_keys,x
     bne !+
-    jsr arrow_right
     rts
 
-    // left arrow
-!:  cmp #ARROW_LEFT
-    bne !+
-    jsr arrow_left
-    rts
+    // check if A matches this input
+!:  cmp input_keys,x
+    beq !+
 
-    // up arrow
-!:  cmp #ARROW_UP
-    bne !+
-    jsr arrow_up
-    rts
+    // no match so move to next input key
+    inx
+    clc
+    bcc process_input
 
-    // down arrow
-!:  cmp #ARROW_DOWN
-    bne !+
-    jsr arrow_down
-    rts
+    // match found, get address
+!:  lda actions_low,x
+    sta $02
+    lda actions_high,x
+    sta $03
 
-    // plus key
-!:  cmp #'+'
-    bne !+
-    jsr plus_key
-    rts
-
-    // minus key
-!:  cmp #'-'
-    bne !+
-    jsr minus_key
-    rts
-
-    // G - goto address
-!:  cmp #'G'
-    bne !+
-    jsr goto_address
-    rts
-
-    // E - edit byte
-!:  cmp #'E'
-    bne !+
-    jsr edit_byte
-    rts
-
-    // F1 - show help
-!:  cmp #F1
-    bne !+
-    jsr show_help
-    rts
-
-    // F3 - toggle LORAM memory bank
-!:  cmp #F3
-    bne !+
-    jsr toggle_loram
-    rts
-
-    // Q - exit program
-!:  cmp #'Q'
-    bne !+
-    jsr exit_program
-    rts
-
-    // return to start
-!:  rts
+    // jump to the address
+    jmp ($02)
 // ==========================================
 
 
