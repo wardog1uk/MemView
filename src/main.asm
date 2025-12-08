@@ -230,43 +230,37 @@ update:
     // right arrow
     cmp #ARROW_RIGHT
     bne !+
-    lda #TABLE_COLS
-    jsr increase_start_address
+    jsr arrow_right
     rts
 
     // left arrow
 !:  cmp #ARROW_LEFT
     bne !+
-    lda #TABLE_COLS
-    jsr decrease_start_address
+    jsr arrow_left
     rts
 
     // up arrow
 !:  cmp #ARROW_UP
     bne !+
-    lda #TABLE_COLS * TABLE_ROWS
-    jsr decrease_start_address
+    jsr arrow_up
     rts
 
     // down arrow
 !:  cmp #ARROW_DOWN
     bne !+
-    lda #TABLE_COLS * TABLE_ROWS
-    jsr increase_start_address
+    jsr arrow_down
     rts
 
     // plus key
 !:  cmp #'+'
     bne !+
-    lda #1
-    jsr increase_start_address
+    jsr plus_key
     rts
 
     // minus key
 !:  cmp #'-'
     bne !+
-    lda #1
-    jsr decrease_start_address
+    jsr minus_key
     rts
 
     // G - goto address
@@ -290,22 +284,76 @@ update:
     // F3 - toggle LORAM memory bank
 !:  cmp #F3
     bne !+
-    lda $01
-    eor #%00000001
-    sta $01
-    jsr show_status_bar
+    jsr toggle_loram
     rts
 
     // Q - exit program
 !:  cmp #'Q'
     bne !+
-    pla
-    pla
-    jsr clear_screen
+    jsr exit_program
     rts
 
     // return to start
 !:  rts
+// ==========================================
+
+
+// ==========================================
+exit_program:
+    pla
+    pla
+    pla
+    pla
+    jsr clear_screen
+    rts
+// ==========================================
+
+
+// ==========================================
+arrow_right:
+    lda #TABLE_COLS
+    jsr increase_start_address
+    rts
+// ==========================================
+
+
+// ==========================================
+arrow_left:
+    lda #TABLE_COLS
+    jsr decrease_start_address
+    rts
+// ==========================================
+
+
+// ==========================================
+arrow_up:
+    lda #TABLE_COLS * TABLE_ROWS
+    jsr decrease_start_address
+    rts
+// ==========================================
+
+
+// ==========================================
+arrow_down:
+    lda #TABLE_COLS * TABLE_ROWS
+    jsr increase_start_address
+    rts
+// ==========================================
+
+
+// ==========================================
+plus_key:
+    lda #1
+    jsr increase_start_address
+    rts
+// ==========================================
+
+
+// ==========================================
+minus_key:
+    lda #1
+    jsr decrease_start_address
+    rts
 // ==========================================
 
 
@@ -335,6 +383,18 @@ decrease_start_address:
     bcs !+
     dec START_ADDRESS+1
 !:  sta START_ADDRESS
+    rts
+// ==========================================
+
+
+// ==========================================
+// Toggle LORAM memory bank
+// ==========================================
+toggle_loram:
+    lda $01
+    eor #%00000001
+    sta $01
+    jsr show_status_bar
     rts
 // ==========================================
 
