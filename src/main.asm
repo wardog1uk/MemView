@@ -32,6 +32,9 @@
 // pointer to address being written
 .const CURRENT_ADDRESS = $c9    // LXSP
 
+// pointer for general use
+.const TEMP_POINTER = $fb
+
 // Address for the start of the status line
 .const STATUS_LINE_START = SCREEN_RAM + (SCREEN_HEIGHT * SCREEN_WIDTH)
 
@@ -265,12 +268,12 @@ process_input:
 
     // match found, get address
 !:  lda actions_low,x
-    sta $02
+    sta TEMP_POINTER
     lda actions_high,x
-    sta $03
+    sta TEMP_POINTER+1
 
     // jump to the address
-    jmp ($02)
+    jmp (TEMP_POINTER)
 // ==========================================
 
 
