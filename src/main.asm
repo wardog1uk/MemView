@@ -456,7 +456,7 @@ goto_address:
 // Show help text
 // ==========================================
 show_help:
-    // get_user_input title line
+    // update title line
     jsr reset_line_start
     jsr clear_line
 
