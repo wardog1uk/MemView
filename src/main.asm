@@ -32,6 +32,9 @@
 // pointer to address being written
 .const CURRENT_ADDRESS = $c9    // LXSP
 
+// pointer for general use
+.const TEMP_POINTER = $fb
+
 // Address for the start of the status line
 .const STATUS_LINE_START = SCREEN_RAM + (SCREEN_HEIGHT * SCREEN_WIDTH)
 
@@ -82,6 +85,16 @@ HELP:
 // currently selected table location
 SELECTED_ROW: .byte 0
 SELECTED_COLUMN: .byte 0
+
+// Table of valid keys
+input_keys: .byte ARROW_RIGHT, ARROW_LEFT, ARROW_UP, ARROW_DOWN, '+', '-', 'G', 'E', F1, F3, 'Q', $0
+
+// Addresses of routines for each key
+actions_low:  .byte <arrow_right, <arrow_left, <arrow_up, <arrow_down, <plus_key, <minus_key
+              .byte <goto_address, <edit_byte, <show_help, <toggle_loram, <exit_program
+actions_high: .byte >arrow_right, >arrow_left, >arrow_up, >arrow_down, >plus_key, >minus_key
+              .byte >goto_address, >edit_byte, >show_help, >toggle_loram, >exit_program
+
 // ==========================================
 
 
@@ -94,7 +107,7 @@ start:
     jsr show_status_bar
 
 !:  jsr output_screen_data
-    jsr update
+    jsr get_user_input
     clc
     bcc !-
 // ==========================================
@@ -222,88 +235,54 @@ output_screen_data:
 // ==========================================
 // Get and process user input
 // ==========================================
-update:
+get_user_input:
     // wait for key press
     jsr $ffe4
-    beq update
+    beq get_user_input
 
-    // right arrow
-    cmp #ARROW_RIGHT
+    ldx #0
+    jsr process_input
+
+    rts
+// ==========================================
+
+
+// ==========================================
+// Check for key input and jump to action
+// Starts from position X in input_keys
+// ==========================================
+process_input:
+    // return if no more input keys to check
+    ldy input_keys,x
     bne !+
-    jsr arrow_right
     rts
 
-    // left arrow
-!:  cmp #ARROW_LEFT
-    bne !+
-    jsr arrow_left
-    rts
+    // check if A matches this input
+!:  cmp input_keys,x
+    beq !+
 
-    // up arrow
-!:  cmp #ARROW_UP
-    bne !+
-    jsr arrow_up
-    rts
+    // no match so move to next input key
+    inx
+    clc
+    bcc process_input
 
-    // down arrow
-!:  cmp #ARROW_DOWN
-    bne !+
-    jsr arrow_down
-    rts
+    // match found, get address
+!:  lda actions_low,x
+    sta TEMP_POINTER
+    lda actions_high,x
+    sta TEMP_POINTER+1
 
-    // plus key
-!:  cmp #'+'
-    bne !+
-    jsr plus_key
-    rts
-
-    // minus key
-!:  cmp #'-'
-    bne !+
-    jsr minus_key
-    rts
-
-    // G - goto address
-!:  cmp #'G'
-    bne !+
-    jsr goto_address
-    rts
-
-    // E - edit byte
-!:  cmp #'E'
-    bne !+
-    jsr edit_byte
-    rts
-
-    // F1 - show help
-!:  cmp #F1
-    bne !+
-    jsr show_help
-    rts
-
-    // F3 - toggle LORAM memory bank
-!:  cmp #F3
-    bne !+
-    jsr toggle_loram
-    rts
-
-    // Q - exit program
-!:  cmp #'Q'
-    bne !+
-    jsr exit_program
-    rts
-
-    // return to start
-!:  rts
+    // jump to the address
+    jmp (TEMP_POINTER)
 // ==========================================
 
 
 // ==========================================
 exit_program:
-    pla
-    pla
-    pla
-    pla
+    ldx #6
+!:  pla
+    dex
+    bne !-
     jsr clear_screen
     rts
 // ==========================================

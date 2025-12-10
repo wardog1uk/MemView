@@ -56,7 +56,7 @@ Move the cursor back to the first byte and press `R` to run the code you just en
 
 You could also press enter to exit edit mode and `Q` to quit the program, then type `SYS 49152` to execute your code (if you put the first byte at $C000).
 
-    EE 20 D0  ; JSR $D020 (Set border color)
+    EE 20 D0  ; JSR $D020 (Set border colour)
     60        ; RTS
 
 Try changing the $20 to a $21.
