@@ -4,6 +4,7 @@
 #import "convert.asm"
 #import "input.asm"
 #import "output.asm"
+#import "goto.asm"
 #import "help.asm"
 
 #if C000
@@ -217,80 +218,6 @@ toggle_loram:
     eor #%00000001
     sta $01
     jsr show_status_bar
-    rts
-// ==========================================
-
-
-// ==========================================
-goto_address:
-    // move to status line
-    lda #<STATUS_LINE_START
-    sta CURRENT_LINE_START
-    lda #>STATUS_LINE_START
-    sta CURRENT_LINE_START+1
-
-    .var goto_start = (SCREEN_WIDTH-GOTO_TEXT.size()-4)/2
-    ldy #goto_start
-    ldx #0
-
-    // output GOTO text
-!:  lda GOTO,x
-    beq !+
-    clc
-    adc #128
-    sta (CURRENT_LINE_START),y
-    iny
-    inx
-    clc
-    bcc !-
-
-    // output start address
-!:  ldy #goto_start+GOTO_TEXT.size()
-    lda START_ADDRESS+1
-    jsr output_byte
-    lda START_ADDRESS
-    jsr output_byte
-
-    // get key press
-!:  jsr $ffe4
-    beq !-
-
-    // check for return key
-    cmp #$0d
-    beq !+
-
-    jsr convert_hex_digit
-
-    // not a hex digit
-    bmi !-
-
-    // handle hex digit
-    // shift address left by one byte
-    asl START_ADDRESS
-    rol START_ADDRESS+1
-    asl START_ADDRESS
-    rol START_ADDRESS+1
-    asl START_ADDRESS
-    rol START_ADDRESS+1
-    asl START_ADDRESS
-    rol START_ADDRESS+1
-
-    // add hex value to address
-    ora START_ADDRESS
-    sta START_ADDRESS
-
-    // reset selected row and column
-    lda #0
-    sta SELECTED_ROW
-    sta SELECTED_COLUMN
-
-    // restart loop
-    clc
-    bcc !--
-
-    // redraw status bar
-!:  jsr show_status_bar
-
     rts
 // ==========================================
 
