@@ -12,7 +12,7 @@ edit_byte:
     sta (CURRENT_LINE_START),y
 
     // display current selection
-    jsr show_selection
+    jsr show_cursor
 
     // get address of selected byte
     jsr get_selected_address
@@ -32,7 +32,7 @@ edit_loop:
     // up arrow
 !:  cmp #ARROW_UP
     bne !+
-    jsr hide_selection
+    jsr hide_cursor
     ldx SELECTED_ROW
     beq edit_byte
     dec SELECTED_ROW
@@ -42,7 +42,7 @@ edit_loop:
     // down arrow
 !:  cmp #ARROW_DOWN
     bne !+
-    jsr hide_selection
+    jsr hide_cursor
     ldx SELECTED_ROW
     cpx #TABLE_ROWS-1
     bcs edit_byte
@@ -53,7 +53,7 @@ edit_loop:
     // left arrow
 !:  cmp #ARROW_LEFT
     bne !+
-    jsr hide_selection
+    jsr hide_cursor
     ldx SELECTED_COLUMN
     beq edit_byte
     dec SELECTED_COLUMN
@@ -63,7 +63,7 @@ edit_loop:
     // right arrow
 !:  cmp #ARROW_RIGHT
     bne !+
-    jsr hide_selection
+    jsr hide_cursor
     ldx SELECTED_COLUMN
     cpx #TABLE_COLS-1
     bcs edit_byte
@@ -73,7 +73,7 @@ edit_loop:
 
 !:  cmp #'R'
     bne !+
-    jsr hide_selection
+    jsr hide_cursor
     jsr execute
     clc
     bcc edit_byte
@@ -83,13 +83,13 @@ edit_loop:
     beq !+
 
     // check for and handle hex digit
-    jsr hex_input_when_editing
+    jsr get_input_when_editing
 
     // restart loop
     clc
     bcc edit_loop
 
-!:  jsr hide_selection
+!:  jsr hide_cursor
 
     // put "F1" back on title bar
     jsr reset_line_start
@@ -154,7 +154,7 @@ execute:
 // ==========================================
 // Handle hex input when in edit mode
 // ==========================================
-hex_input_when_editing:
+get_input_when_editing:
     jsr convert_hex_digit
     bpl !+
 
@@ -186,16 +186,16 @@ hex_input_when_editing:
     // save byte
     pha
 
-    // move to correct place
-    jsr hide_selection
+    // hide cursor and move back to correct place
+    jsr hide_cursor
     dey
 
     // output byte
     pla
     jsr output_byte
 
-    // invert selection
-    jsr show_selection
+    // show cursor
+    jsr show_cursor
 
     rts
 // ==========================================
@@ -204,7 +204,7 @@ hex_input_when_editing:
 // ==========================================
 // Show cursor for selected byte
 // ==========================================
-show_selection:
+show_cursor:
     jsr toggle_selection
 
     // draw right side bar
@@ -230,7 +230,7 @@ show_selection:
 // ==========================================
 // Hide cursor for selected byte
 // ==========================================
-hide_selection:
+hide_cursor:
     jsr toggle_selection
 
     // hide right side bar
