@@ -32,19 +32,16 @@ start:
 
 
 // ==========================================
-exit_program:
-    ldx #6
-!:  pla
-    dex
-    bne !-
-    jsr clear_screen
+arrow_up:
+    lda #TABLE_COLS * TABLE_ROWS
+    jsr decrease_start_address
     rts
 // ==========================================
 
 
 // ==========================================
-arrow_right:
-    lda #TABLE_COLS
+arrow_down:
+    lda #TABLE_COLS * TABLE_ROWS
     jsr increase_start_address
     rts
 // ==========================================
@@ -59,16 +56,8 @@ arrow_left:
 
 
 // ==========================================
-arrow_up:
-    lda #TABLE_COLS * TABLE_ROWS
-    jsr decrease_start_address
-    rts
-// ==========================================
-
-
-// ==========================================
-arrow_down:
-    lda #TABLE_COLS * TABLE_ROWS
+arrow_right:
+    lda #TABLE_COLS
     jsr increase_start_address
     rts
 // ==========================================
@@ -155,5 +144,16 @@ move_down:
     bcc !+
     inc CURRENT_LINE_START+1
 !:  sta CURRENT_LINE_START
+    rts
+// ==========================================
+
+
+// ==========================================
+exit_program:
+    ldx #6
+!:  pla
+    dex
+    bne !-
+    jsr clear_screen
     rts
 // ==========================================
