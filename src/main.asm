@@ -1,3 +1,12 @@
+#if C000
+    *=$c000 "MemView"
+    jmp start
+#else
+    BasicUpstart2(start)
+    *=* "MemView"
+#endif
+
+
 #import "const.asm"
 #import "variables.asm"
 #import "edit.asm"
@@ -6,14 +15,6 @@
 #import "output.asm"
 #import "goto.asm"
 #import "help.asm"
-
-#if C000
-    *=$c000 "MemView"
-    jmp start
-#else
-    BasicUpstart2(start)
-    *=* "MemView"
-#endif
 
 
 // ==========================================
