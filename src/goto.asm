@@ -9,13 +9,14 @@ goto_address:
     lda #>STATUS_LINE_START
     sta CURRENT_LINE_START+1
 
+    // calculate position to center goto text
     .var goto_start = (SCREEN_WIDTH-GOTO_TEXT.size()-4)/2
     ldy #goto_start
     ldx #0
 
     // output GOTO text
 !:  lda GOTO,x
-    beq !+
+    beq goto_address_loop
     clc
     adc #128
     sta (CURRENT_LINE_START),y
@@ -24,8 +25,9 @@ goto_address:
     clc
     bcc !-
 
+goto_address_loop:
     // output start address
-!:  ldy #goto_start+GOTO_TEXT.size()
+    ldy #goto_start+GOTO_TEXT.size()
     lda START_ADDRESS+1
     jsr output_byte
     lda START_ADDRESS
@@ -37,12 +39,17 @@ goto_address:
 
     // check for return key
     cmp #$0d
-    beq !+
+    bne !+
 
-    jsr convert_hex_digit
+    // return key so redraw and exit
+    jsr show_status_bar
+    rts
 
-    // not a hex digit
-    bmi !-
+    // not return
+!:  jsr convert_hex_digit
+
+    // restart loop if not a hex digit
+    bmi goto_address_loop
 
     // handle hex digit
     // shift address left by one byte
@@ -59,17 +66,12 @@ goto_address:
     ora START_ADDRESS
     sta START_ADDRESS
 
-    // reset selected row and column
+    // reset selected row and column for editing
     lda #0
     sta SELECTED_ROW
     sta SELECTED_COLUMN
 
     // restart loop
     clc
-    bcc !--
-
-    // redraw status bar
-!:  jsr show_status_bar
-
-    rts
+    bcc goto_address_loop
 // ==========================================
